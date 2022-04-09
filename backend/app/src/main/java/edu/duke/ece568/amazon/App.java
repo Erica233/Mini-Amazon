@@ -4,12 +4,17 @@
 package edu.duke.ece568.amazon;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+  public String getGreeting() {
+    return "Hello World!";
+  }
 
-    public static void main(String[] args) {
-        AmazonServer server = new AmazonServer();
-        server.runServer();
+  public static void main(String[] args) {
+    AmazonServer server = new AmazonServer();
+    try {
+      server.getWorldConnection();
     }
+    catch (Exception e) {
+      System.out.println(e);
+    } 
+  }
 }

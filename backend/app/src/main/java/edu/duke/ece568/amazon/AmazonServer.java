@@ -33,11 +33,19 @@ public class AmazonServer {
   }
 
   public void getWorldConnection() throws IOException {
-    this.worldSocket = new Socket(worldHost, worldPort);
-    in = worldSocket.getInputStream();
-    out = worldSocket.getOutputStream();
-    AConnect.Builder connectRequest = AConnect.newBuilder();
-
+    try {
+      this.worldSocket = new Socket(worldHost, worldPort);
+      in = worldSocket.getInputStream();
+      out = worldSocket.getOutputStream();
+      AConnect.Builder connectRequest = AConnect.newBuilder();
+      connectRequest.setWorldid(1);
+      connectRequest.addAllInitwh(warehouseList);
+      connectRequest.setIsAmazon(true);
+      System.out.println(connectRequest);
+    }
+    catch (IOException e) {
+      System.out.println(e);
+    }
   }
 
   public void runServer() {
