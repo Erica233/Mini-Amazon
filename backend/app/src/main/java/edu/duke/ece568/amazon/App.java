@@ -10,11 +10,6 @@ public class App {
 
   public static void main(String[] args) {
     AmazonServer server = new AmazonServer();
-    try {
-      server.getWorldConnection();
-    }
-    catch (Exception e) {
-      System.out.println(e);
-    } 
+    server.runServer();
   }
 }
