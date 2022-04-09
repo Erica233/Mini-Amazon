@@ -21,7 +21,7 @@ public class AmazonServer {
 
   private final int frontendPort = 6666;
 
-  private List<AInitWarehouse> warehouseList;
+  private final List<AInitWarehouse> warehouseList;
   private long seqnum;
 
   private ThreadPoolExecutor myThreadPool;
@@ -29,11 +29,7 @@ public class AmazonServer {
   public AmazonServer() {
     seqnum = 1;
     myThreadPool = new ThreadPoolExecutor(50, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-    setupWarehouse();
-  }
-
-  public void setupWarehouse () {
-    this.warehouseList = null;
+    warehouseList = new databaseOperator().getWarehouse();
   }
 
   public void getWorldConnection() throws IOException {
@@ -44,5 +40,7 @@ public class AmazonServer {
 
   }
 
-  public void runServer() {}
+  public void runServer() {
+   
+  }
 }
