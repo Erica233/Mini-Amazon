@@ -9,20 +9,15 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AmazonServer {
-  private final String worldHost = "vcm-24690.vm.duke.edu";
-  private final int worldPort = 23456;
+  
   private Socket worldSocket;
   private InputStream in;
   private OutputStream out;
 
-  private final String upsHost = "vcm-24306.vm.duke.edu";
-  private final int upsPort = 8888;
   private ServerSocket upsListener;
 
-  private final int frontendPort = 6666;
   private ServerSocket frontendListener;
 
-  private final List<AInitWarehouse> warehouseList;
   private long seqnum;
 
   private ThreadPoolExecutor myThreadPool;
@@ -32,9 +27,7 @@ public class AmazonServer {
    */
   public AmazonServer() {
     seqnum = 1;
-    myThreadPool = new ThreadPoolExecutor(50, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-    warehouseList = new databaseOperator().getWarehouse();
-    System.out.println("Warehouse numbers: " + warehouseList.size());
+    myThreadPool = new ThreadPoolExecutor(25, 50, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
   }
 
   /**
@@ -50,56 +43,17 @@ public class AmazonServer {
         System.out.println("Connection: " + e);
       }
     }
-    startServices();
+    startService();
     System.out.println("Finish Successfully!");
-  }
-
-  /**
-   * This sends a goolge protocol buffer message through socket,
-   * adjusts from the C++ version example provided in the project pdf
-   */ 
-  public <T extends GeneratedMessageV3> boolean sendMessage(T message, OutputStream output) throws IOException { 
-    try {
-      byte[] rawData = message.toByteArray();
-      int size = rawData.length;
-      CodedOutputStream codedOutput = CodedOutputStream.newInstance(output);
-      codedOutput.writeUInt32NoTag(size); // writeRawVarint32() is deprecated, use writeUInt32NoTag() instead
-      message.writeTo(codedOutput);
-      codedOutput.flush();
-      return true;
-    }
-    catch (IOException e) {
-      System.out.println("Send message: " + e);
-      return false;
-    }
-  }
-
-  /**
-   * This receives a goolge protocol buffer message through socket,
-   * adjusts from the C++ versin example provided in the project pdf
-   */ 
-  public <T extends GeneratedMessageV3.Builder<?>> boolean receiveMessage(T message, InputStream input) throws IOException {
-    try {
-      CodedInputStream codedInput = CodedInputStream.newInstance(input);
-      int size = codedInput.readRawVarint32();
-      int limit = codedInput.pushLimit(size);
-      message.mergeFrom(codedInput);
-      codedInput.popLimit(limit);
-      return true;
-    }
-    catch (IOException e) {
-      System.out.println("Receive message: " + e);
-      return false;
-    }
   }
 
   public void getConnection() throws IOException {
     while (true) {
       try{
-        long worldid = getUpsConnection();
+        long worldid = new UpsOperator().getUpsConnection(upsListener);
         System.out.println("Connect to UPS Successfully!");
         try{
-          getWorldConnection(worldid);
+          new WorldOperator().getWorldConnection(worldid, worldSocket, in, out);
           System.out.println("Connect to world Successfully!");
           break;
         }
@@ -111,57 +65,21 @@ public class AmazonServer {
       catch (IOException e) {
         System.out.println("UPS connection: " + e);
         continue;
-      }      
+      }     
     }
   }
 
-  /**
-   * This tries to make a socket connection betweeen amazon server and the ups server 
-   */
-  public long getUpsConnection() throws IOException {
-    while (true) {
-      upsListener = new ServerSocket(upsPort);
-      Socket upsSocket = upsListener.accept();
-      InputStream input = upsSocket.getInputStream();
-      OutputStream output = upsSocket.getOutputStream();
-      UAConnect.Builder connectRequest = UAConnect.newBuilder();
-      receiveMessage(connectRequest, input);
-      if (connectRequest.hasWorldid()) {
-        System.out.println("UPS connection: worldid is " + connectRequest.getWorldid());
-        AUConnected.Builder connectResponse = AUConnected.newBuilder();
-        connectResponse.setWorldConnectionStatus(true);
-        connectResponse.setSeqnum(connectRequest.getSeqnum());
-        sendMessage(connectResponse.build(), output);
-        return connectRequest.getWorldid();
-      }
-    }
-  }
-
-  /**
-   * This tries to make a socket connection betweeen amazon server and the world simulator 
-   */
-  public void getWorldConnection(long worldid) throws IOException {
-    while(true) {
-      this.worldSocket = new Socket(worldHost, worldPort);
-      in = worldSocket.getInputStream();
-      out = worldSocket.getOutputStream();
-      AConnect.Builder connectRequest = AConnect.newBuilder();
-      connectRequest.setWorldid(worldid);
-      connectRequest.addAllInitwh(warehouseList);
-      connectRequest.setIsAmazon(true);
-      AConnected.Builder connectResponse = AConnected.newBuilder();
-      sendMessage(connectRequest.build(), out);
-      receiveMessage(connectResponse, in);
-      System.out.println("World connection: worldid is " + connectResponse.getWorldid());
-      System.out.println("World connection: " + connectResponse.getResult());
-      String result = connectResponse.getResult();
-      if (result.equals("connected!")) {
-        return;
-      }
-    }
-  }
-
-  public void startServices() {
+  public void startService() {
     myThreadPool.prestartAllCoreThreads();
+    dealFrontendMessage();
+    dealUpsMessage();
+    dealWorldMessage();
   }
+
+  public void dealFrontendMessage() {}
+
+  public void dealUpsMessage() {}
+
+  public void dealWorldMessage() {}
+
 }

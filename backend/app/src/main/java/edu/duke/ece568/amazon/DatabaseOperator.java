@@ -7,9 +7,9 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-public class databaseOperator {
+public class DatabaseOperator {
 
-  public databaseOperator() {}
+  public DatabaseOperator() {}
 
   public List<AInitWarehouse> getWarehouse() {
     try{
