@@ -15,11 +15,12 @@ public class AmazonServer {
   private InputStream in;
   private OutputStream out;
 
-  private Socket upsSocket;
   private final String upsHost = "vcm-24306.vm.duke.edu";
   private final int upsPort = 8888;
+  private ServerSocket upsListener;
 
   private final int frontendPort = 6666;
+  private ServerSocket frontendListener;
 
   private final List<AInitWarehouse> warehouseList;
   private long seqnum;
@@ -36,16 +37,20 @@ public class AmazonServer {
     System.out.println("Warehouse numbers: " + warehouseList.size());
   }
 
+  /**
+   * This starts an amazon server
+   */
   public void runServer() {
     while(true) {
       try{
-        getWorldConnection();
+        getConnection();
         break;
       }
       catch (Exception e) {
-        System.out.println("World connection: " + e);
+        System.out.println("Connection: " + e);
       }
     }
+    startServices();
     System.out.println("Finish Successfully!");
   }
 
@@ -88,21 +93,75 @@ public class AmazonServer {
     }
   }
 
+  public void getConnection() throws IOException {
+    while (true) {
+      try{
+        long worldid = getUpsConnection();
+        System.out.println("Connect to UPS Successfully!");
+        try{
+          getWorldConnection(worldid);
+          System.out.println("Connect to world Successfully!");
+          break;
+        }
+        catch (IOException e) {
+          System.out.println("World connection: " + e);
+          continue;
+        }
+      }
+      catch (IOException e) {
+        System.out.println("UPS connection: " + e);
+        continue;
+      }      
+    }
+  }
+
+  /**
+   * This tries to make a socket connection betweeen amazon server and the ups server 
+   */
+  public long getUpsConnection() throws IOException {
+    while (true) {
+      upsListener = new ServerSocket(upsPort);
+      Socket upsSocket = upsListener.accept();
+      InputStream input = upsSocket.getInputStream();
+      OutputStream output = upsSocket.getOutputStream();
+      UAConnect.Builder connectRequest = UAConnect.newBuilder();
+      receiveMessage(connectRequest, input);
+      if (connectRequest.hasWorldid()) {
+        System.out.println("UPS connection: worldid is " + connectRequest.getWorldid());
+        AUConnected.Builder connectResponse = AUConnected.newBuilder();
+        connectResponse.setWorldConnectionStatus(true);
+        connectResponse.setSeqnum(connectRequest.getSeqnum());
+        sendMessage(connectResponse.build(), output);
+        return connectRequest.getWorldid();
+      }
+    }
+  }
+
   /**
    * This tries to make a socket connection betweeen amazon server and the world simulator 
    */
-  public void getWorldConnection() throws IOException {
-    this.worldSocket = new Socket(worldHost, worldPort);
-    in = worldSocket.getInputStream();
-    out = worldSocket.getOutputStream();
-    AConnect.Builder connectRequest = AConnect.newBuilder();
-    //connectRequest.setWorldid(1);
-    connectRequest.addAllInitwh(warehouseList);
-    connectRequest.setIsAmazon(true);
-    AConnected.Builder connectResponse = AConnected.newBuilder();
-    sendMessage(connectRequest.build(), out);
-    receiveMessage(connectResponse, in);
-    System.out.println("World connection: worldid is " + connectResponse.getWorldid());
-    System.out.println("World connection: " + connectResponse.getResult());
+  public void getWorldConnection(long worldid) throws IOException {
+    while(true) {
+      this.worldSocket = new Socket(worldHost, worldPort);
+      in = worldSocket.getInputStream();
+      out = worldSocket.getOutputStream();
+      AConnect.Builder connectRequest = AConnect.newBuilder();
+      connectRequest.setWorldid(worldid);
+      connectRequest.addAllInitwh(warehouseList);
+      connectRequest.setIsAmazon(true);
+      AConnected.Builder connectResponse = AConnected.newBuilder();
+      sendMessage(connectRequest.build(), out);
+      receiveMessage(connectResponse, in);
+      System.out.println("World connection: worldid is " + connectResponse.getWorldid());
+      System.out.println("World connection: " + connectResponse.getResult());
+      String result = connectResponse.getResult();
+      if (result.equals("connected!")) {
+        return;
+      }
+    }
+  }
+
+  public void startServices() {
+    myThreadPool.prestartAllCoreThreads();
   }
 }
