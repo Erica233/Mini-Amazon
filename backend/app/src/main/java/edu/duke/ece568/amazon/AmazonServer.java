@@ -33,6 +33,7 @@ public class AmazonServer {
     seqnum = 1;
     myThreadPool = new ThreadPoolExecutor(50, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
     warehouseList = new databaseOperator().getWarehouse();
+    System.out.println("Warehouse numbers: " + warehouseList.size());
   }
 
   public void runServer() {
