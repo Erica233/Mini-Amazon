@@ -10,10 +10,14 @@ import java.util.*;
 
 public class UpsOperator {
 
+  private SeqnumFactory seqnumFactory;
   private final String upsHost = "vcm-24306.vm.duke.edu";
-  private final int upsPort = 8888;
+  private final int upsPort = 6666;
   
-  public UpsOperator() {}
+  
+  public UpsOperator(SeqnumFactory seqnumFactory) {
+    this.seqnumFactory = seqnumFactory;
+  }
 
   /**
    * This tries to make a socket connection betweeen amazon server and the ups server 
@@ -36,5 +40,7 @@ public class UpsOperator {
       }
     }
   }
+
+  public void handleUpsMessage(ServerSocket upsListener) {}
 
 }

@@ -9,51 +9,53 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AmazonServer {
-  
-  private Socket worldSocket;
-  private InputStream in;
-  private OutputStream out;
-
-  private ServerSocket upsListener;
-
-  private ServerSocket frontendListener;
-
-  private long seqnum;
 
   private ThreadPoolExecutor myThreadPool;
+  private SeqnumFactory seqnumFactory;
+
+  private WorldOperator worldOperator;
+  
+  private ServerSocket upsListener;
+  private UpsOperator upsOperator;
+
+  private ServerSocket frontendListener;
+  private FrontendOperator frontendOperator;
 
   /**
    * This constructs an amazon server
    */
   public AmazonServer() {
-    seqnum = 1;
     myThreadPool = new ThreadPoolExecutor(25, 50, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
+    seqnumFactory = new SeqnumFactory();
+    worldOperator = new WorldOperator(seqnumFactory);
+    upsOperator = new UpsOperator(seqnumFactory);
+    frontendOperator = new FrontendOperator(seqnumFactory);
   }
 
   /**
    * This starts an amazon server
    */
   public void runServer() {
+    System.out.println("Ready to get connection!");
     while(true) {
-      try{
-        getConnection();
-        break;
-      }
-      catch (Exception e) {
-        System.out.println("Connection: " + e);
-      }
+      getConnection();
+      break;
     }
+    System.out.println("Service start!");
     startService();
     System.out.println("Finish Successfully!");
   }
 
-  public void getConnection() throws IOException {
+  /**
+   * This tries to enable amazon server's connection with world simulator and ups server 
+   */
+  public void getConnection() {
     while (true) {
       try{
-        long worldid = new UpsOperator().getUpsConnection(upsListener);
+        long worldid = upsOperator.getUpsConnection(upsListener);
         System.out.println("Connect to UPS Successfully!");
         try{
-          new WorldOperator().getWorldConnection(worldid, worldSocket, in, out);
+          worldOperator.getWorldConnection(worldid);
           System.out.println("Connect to world Successfully!");
           break;
         }
@@ -65,10 +67,13 @@ public class AmazonServer {
       catch (IOException e) {
         System.out.println("UPS connection: " + e);
         continue;
-      }     
+      }    
     }
   }
 
+  /**
+   * This starts to deal with messages from world simulator, ups server and frontend website
+   */
   public void startService() {
     myThreadPool.prestartAllCoreThreads();
     dealFrontendMessage();
@@ -76,10 +81,37 @@ public class AmazonServer {
     dealWorldMessage();
   }
 
-  public void dealFrontendMessage() {}
+  /**
+   * This deals with messages from frontend website
+   */
+  public void dealFrontendMessage() {
+    while (true) {
+      try {
+        frontendOperator.handleFrontendMessage(frontendListener);
+      }
+      catch (IOException e) {
+        System.out.println("Message from frontend: " + e);
+        continue;
+      }
+    }
+  }
 
-  public void dealUpsMessage() {}
+  /**
+   * This deals with messages from ups server
+   */
+  public void dealUpsMessage() {
+    while (true) {
+      upsOperator.handleUpsMessage(upsListener);
+    }
+  }
 
-  public void dealWorldMessage() {}
+   /**
+   * This deals with messages from world simulator
+   */
+  public void dealWorldMessage() {
+    while (true) {
+      worldOperator.handleWorldMessage();
+    }
+  }
 
 }
