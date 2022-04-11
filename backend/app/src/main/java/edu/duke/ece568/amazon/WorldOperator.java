@@ -7,10 +7,12 @@ import java.io.*;
 import java.sql.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class WorldOperator {
 
   private SeqnumFactory seqnumFactory;
+  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private final String worldHost = "vcm-24690.vm.duke.edu";
   private final int worldPort = 23456;
   private Socket worldSocket;
@@ -18,8 +20,9 @@ public class WorldOperator {
   private OutputStream out;
   
 
-  public WorldOperator(SeqnumFactory seqnumFactory) {
+  public WorldOperator(SeqnumFactory seqnumFactory, ConcurrentHashMap<Long, APurchaseMore> purchasingProduct) {
     this.seqnumFactory = seqnumFactory;
+    this.purchasingProduct = purchasingProduct;
   }
 
   /**

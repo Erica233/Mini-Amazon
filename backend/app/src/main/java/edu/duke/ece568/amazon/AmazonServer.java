@@ -21,15 +21,18 @@ public class AmazonServer {
   private ServerSocket frontendListener;
   private FrontendOperator frontendOperator;
 
+  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
+
   /**
    * This constructs an amazon server
    */
   public AmazonServer() {
     myThreadPool = new ThreadPoolExecutor(25, 50, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
     seqnumFactory = new SeqnumFactory();
-    worldOperator = new WorldOperator(seqnumFactory);
+    purchasingProduct = new ConcurrentHashMap<> ();
+    worldOperator = new WorldOperator(seqnumFactory, purchasingProduct);
     upsOperator = new UpsOperator(seqnumFactory);
-    frontendOperator = new FrontendOperator(seqnumFactory);
+    frontendOperator = new FrontendOperator(seqnumFactory, purchasingProduct);
   }
 
   /**

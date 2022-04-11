@@ -7,14 +7,17 @@ import java.io.*;
 import java.sql.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class FrontendOperator {
 
   private SeqnumFactory seqnumFactory;
+  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private final int frontendPort = 5678;
 
-  public FrontendOperator(SeqnumFactory seqnumFactory) {
+  public FrontendOperator(SeqnumFactory seqnumFactory, ConcurrentHashMap<Long, APurchaseMore> purchasingProduct) {
     this.seqnumFactory = seqnumFactory;
+    this.purchasingProduct = purchasingProduct;
   }
 
   public void handleFrontendMessage(ServerSocket frontendListener) throws IOException {
@@ -41,6 +44,7 @@ public class FrontendOperator {
     APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
     long seqnum = seqnumFactory.createSeqnum();
     purchase.setSeqnum(seqnum);
+    purchasingProduct.put(packageId, purchase.build());
     ACommands.Builder command = ACommands.newBuilder();
     command.addBuy(purchase.build());
     command.setSimspeed(200);
