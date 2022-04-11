@@ -65,7 +65,7 @@ public class WorldOperator {
     System.out.println("Message from world: " + message);
     List<APurchaseMore> arrivedList = message.getArrivedList();
     for (APurchaseMore arrived : arrivedList) {
-
+      packAndPickPackage(arrived);
     }
     List<APacked> readyList = message.getReadyList();
     List<ALoaded> loadedList = message.getLoadedList();
@@ -78,5 +78,9 @@ public class WorldOperator {
     if (message.hasFinished()) {
       System.out.println("Disconnect to world!");
     }
+  }
+
+  public void packAndPickPackage(APurchaseMore arrived) {
+
   }
 }

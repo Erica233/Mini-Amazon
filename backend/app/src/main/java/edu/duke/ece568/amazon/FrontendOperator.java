@@ -42,7 +42,7 @@ public class FrontendOperator {
     long seqnum = seqnumFactory.createSeqnum();
     purchase.setSeqnum(seqnum);
     ACommands.Builder command = ACommands.newBuilder();
-    command.addBuy(purchase);
+    command.addBuy(purchase.build());
     command.setSimspeed(200);
     new MessageOperator().sendMessage(command.build(), out);
   }

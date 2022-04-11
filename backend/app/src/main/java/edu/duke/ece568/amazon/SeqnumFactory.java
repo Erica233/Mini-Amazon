@@ -8,8 +8,6 @@ public class SeqnumFactory {
   }
 
   public synchronized long createSeqnum() {
-    long res = seqnum;
-    seqnum++;
-    return res;
+    return seqnum++;
   }
 }
