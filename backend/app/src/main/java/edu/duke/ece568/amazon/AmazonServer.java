@@ -21,18 +21,15 @@ public class AmazonServer {
   private ServerSocket frontendListener;
   private FrontendOperator frontendOperator;
 
-  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
-
   /**
    * This constructs an amazon server
    */
   public AmazonServer() {
     myThreadPool = new ThreadPoolExecutor(25, 50, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
     seqnumFactory = new SeqnumFactory();
-    purchasingProduct = new ConcurrentHashMap<> ();
-    worldOperator = new WorldOperator(seqnumFactory, purchasingProduct);
+    worldOperator = new WorldOperator(seqnumFactory);
     upsOperator = new UpsOperator(seqnumFactory);
-    frontendOperator = new FrontendOperator(seqnumFactory, purchasingProduct);
+    frontendOperator = new FrontendOperator();
   }
 
   /**
@@ -90,7 +87,10 @@ public class AmazonServer {
   public void dealFrontendMessage() {
     while (true) {
       try {
-        frontendOperator.handleFrontendMessage(frontendListener);
+        long seqnum = frontendOperator.handleFrontendMessage(frontendListener);
+        if (seqnum != -1) {
+          worldOperator.purchaseProduct(seqnum);
+        }
       }
       catch (IOException e) {
         System.out.println("Message from frontend: " + e);

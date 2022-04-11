@@ -11,18 +11,22 @@ import java.util.concurrent.*;
 
 public class WorldOperator {
 
-  private SeqnumFactory seqnumFactory;
-  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private final String worldHost = "vcm-24690.vm.duke.edu";
   private final int worldPort = 23456;
   private Socket worldSocket;
   private InputStream in;
   private OutputStream out;
-  
 
-  public WorldOperator(SeqnumFactory seqnumFactory, ConcurrentHashMap<Long, APurchaseMore> purchasingProduct) {
+  private SeqnumFactory seqnumFactory;
+  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
+  private ConcurrentHashMap<Long, ScheduledExecutorService> runningService;
+  private ConcurrentHashMap<Long, ScheduledFuture> runningFuture;
+  
+  public WorldOperator(SeqnumFactory seqnumFactory) {
     this.seqnumFactory = seqnumFactory;
-    this.purchasingProduct = purchasingProduct;
+    purchasingProduct = purchasingProduct = new ConcurrentHashMap<> ();
+    runningService = new ConcurrentHashMap<> ();
+    runningFuture = new ConcurrentHashMap<> ();
   }
 
   /**
@@ -83,7 +87,32 @@ public class WorldOperator {
     }
   }
 
-  public void packAndPickPackage(APurchaseMore arrived) {
+  public void purchaseProduct(long packageId) throws IOException {
+    APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
+    long seqnum = seqnumFactory.createSeqnum();
+    purchase.setSeqnum(seqnum);
+    purchasingProduct.put(packageId, purchase.build());
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addBuy(purchase.build());
+    sendMessageToWorld(seqnum, command);
+  }
 
+  public void packAndPickPackage(APurchaseMore arrived) {
+  }
+
+  public synchronized void sendMessageToWorld(long seqnum, ACommands.Builder message) {
+    message.setSimspeed(200);
+    Runnable send = () -> {
+      try {
+        new MessageOperator().sendMessage(message.build(), out);
+      }
+      catch (IOException e) {
+        System.out.println("Send message to world: " + e);
+      }
+    };
+    ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
+    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 60, TimeUnit.SECONDS);
+    runningService.put(seqnum, service);
+    runningFuture.put(seqnum, future);
   }
 }

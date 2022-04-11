@@ -10,17 +10,11 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class FrontendOperator {
-
-  private SeqnumFactory seqnumFactory;
-  private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private final int frontendPort = 5678;
+  
+  public FrontendOperator() {}
 
-  public FrontendOperator(SeqnumFactory seqnumFactory, ConcurrentHashMap<Long, APurchaseMore> purchasingProduct) {
-    this.seqnumFactory = seqnumFactory;
-    this.purchasingProduct = purchasingProduct;
-  }
-
-  public void handleFrontendMessage(ServerSocket frontendListener) throws IOException {
+  public long handleFrontendMessage(ServerSocket frontendListener) throws IOException {
     try {
       frontendListener = new ServerSocket(frontendPort);
       Socket frontendSocket = frontendListener.accept();
@@ -32,23 +26,14 @@ public class FrontendOperator {
         ObjectOutputStream objectOutput = new ObjectOutputStream(output);
         objectOutput.writeBytes("received!");
         objectOutput.flush();
-        purchaseProduct(packageId, output);
+        return packageId;
       }
     }
     catch (IOException e) {
       System.out.println("Send message to world: " + e);
+      return -1;
     }
-  }
-
-  public void purchaseProduct(long packageId, OutputStream out) throws IOException {
-    APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
-    long seqnum = seqnumFactory.createSeqnum();
-    purchase.setSeqnum(seqnum);
-    purchasingProduct.put(packageId, purchase.build());
-    ACommands.Builder command = ACommands.newBuilder();
-    command.addBuy(purchase.build());
-    command.setSimspeed(200);
-    new MessageOperator().sendMessage(command.build(), out);
+    return -1;
   }
 
 }

@@ -10,10 +10,10 @@ import java.util.*;
 
 public class UpsOperator {
 
-  private SeqnumFactory seqnumFactory;
   private final String upsHost = "vcm-24306.vm.duke.edu";
   private final int upsPort = 6666;
   
+  private SeqnumFactory seqnumFactory;
   
   public UpsOperator(SeqnumFactory seqnumFactory) {
     this.seqnumFactory = seqnumFactory;
