@@ -17,7 +17,7 @@ class Package(models.Model):
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     destination_x = models.IntegerField()
     destination_y = models.IntegerField()
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, default='preparing')
 
 class Order(models.Model):
     buyer = models.CharField(max_length=50)
