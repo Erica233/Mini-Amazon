@@ -61,6 +61,6 @@ public class UpsOperator {
   public void handleUpsMessage() {}
 
   public void pickPackage(long packageId) {
-    
+    return;
   }
 }
