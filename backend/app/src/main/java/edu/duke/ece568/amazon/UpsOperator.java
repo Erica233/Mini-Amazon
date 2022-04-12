@@ -35,13 +35,13 @@ public class UpsOperator {
       in = upsSocket.getInputStream();
       out = upsSocket.getOutputStream();
       UAConnect.Builder connectRequest = UAConnect.newBuilder();
-      new MessageOperator().receiveMessage(connectRequest, input);
+      new MessageOperator().receiveMessage(connectRequest, in);
       if (connectRequest.hasWorldid()) {
         System.out.println("UPS connection: worldid is " + connectRequest.getWorldid());
         AUConnected.Builder connectResponse = AUConnected.newBuilder();
         connectResponse.setWorldConnectionStatus(true);
         connectResponse.setSeqnum(connectRequest.getSeqnum());
-        new MessageOperator().sendMessage(connectResponse.build(), output);
+        new MessageOperator().sendMessage(connectResponse.build(), out);
         return connectRequest.getWorldid();
       }
     }
@@ -50,6 +50,6 @@ public class UpsOperator {
   /**
    * This handles messages sent from the UPS server
    */
-  public void handleUpsMessage(ServerSocket upsListener) {}
+  public void handleUpsMessage() {}
 
 }
