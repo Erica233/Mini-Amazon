@@ -16,6 +16,7 @@ public class WorldOperator {
   private Socket worldSocket;
   private InputStream in;
   private OutputStream out;
+  private WorldUpsSwitcher switcher;
   private SeqnumFactory seqnumFactory;
   private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private ConcurrentHashMap<Long, ScheduledExecutorService> runningService;
@@ -29,6 +30,13 @@ public class WorldOperator {
     purchasingProduct = purchasingProduct = new ConcurrentHashMap<> ();
     runningService = new ConcurrentHashMap<> ();
     runningFuture = new ConcurrentHashMap<> ();
+  }
+
+  /**
+   * This sets the world-UPS switcher
+   */
+  public void setSwitcher(WorldUpsSwitcher switcher) {
+    this.switcher = switcher;
   }
 
   /**
@@ -114,6 +122,45 @@ public class WorldOperator {
    * and asks the UPS server for package pick-up
    */
   public void packAndPickPackage(APurchaseMore arrived) {
+    long packageId = -1;
+    ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
+    Iterator<Long> it = keySet.iterator();
+    while(it.hasNext()) {
+      long id = it.next();
+      APurchaseMore purchase = purchasingProduct.get(id);
+      if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
+        packageId = id;
+        purchasingProduct.remove(id);
+        break;
+      }
+      else {
+        continue;
+      }
+    }
+    if (packageId == -1) {
+      System.out.println("To pack package: Package not Found!");
+    }
+    else {
+      switcher.requestPickPackage(packageId);
+      packPackage(packageId, arrived);
+    }
+  }
+
+  /**
+   * This asks the world simulator for package packing
+   */
+  public void packPackage(long packageId, APurchaseMore arrived) {
+    int whnum = arrived.getWhnum();
+    List<AProduct> things = arrived.getThingsList();
+    long seqnum = seqnumFactory.createSeqnum();
+    APack.Builder topack = APack.newBuilder();
+    topack.setWhnum(whnum);
+    topack.addAllThings(things);
+    topack.setShipid(packageId);
+    topack.setSeqnum(seqnum);
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addTopack(topack.build());
+    sendMessageToWorld(seqnum, command);
   }
 
   /**

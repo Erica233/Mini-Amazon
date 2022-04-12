@@ -16,6 +16,7 @@ public class UpsOperator {
   private Socket upsSocket;
   private InputStream in;
   private OutputStream out;
+  private WorldUpsSwitcher switcher;
   private SeqnumFactory seqnumFactory;
   
   /**
@@ -23,6 +24,13 @@ public class UpsOperator {
    */
   public UpsOperator(SeqnumFactory seqnumFactory) {
     this.seqnumFactory = seqnumFactory;
+  }
+
+  /**
+   * This sets the world-UPS switcher
+   */
+  public void setSwitcher(WorldUpsSwitcher switcher) {
+    this.switcher = switcher;
   }
 
   /**
@@ -52,4 +60,7 @@ public class UpsOperator {
    */
   public void handleUpsMessage() {}
 
+  public void pickPackage(long packageId) {
+    
+  }
 }

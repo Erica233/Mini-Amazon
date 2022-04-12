@@ -15,6 +15,7 @@ public class AmazonServer {
   private WorldOperator worldOperator;
   private UpsOperator upsOperator;
   private FrontendOperator frontendOperator;
+  private WorldUpsSwitcher worldUpsSwitcher;
 
   /**
    * This constructs an amazon server
@@ -25,6 +26,9 @@ public class AmazonServer {
     worldOperator = new WorldOperator(seqnumFactory);
     upsOperator = new UpsOperator(seqnumFactory);
     frontendOperator = new FrontendOperator();
+    worldUpsSwitcher = new WorldUpsSwitcher(worldOperator, upsOperator);
+    worldOperator.setSwitcher(worldUpsSwitcher);
+    upsOperator.setSwitcher(worldUpsSwitcher);
   }
 
   /**
