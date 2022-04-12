@@ -12,9 +12,15 @@ public class UpsOperator {
 
   private final String upsHost = "vcm-24306.vm.duke.edu";
   private final int upsPort = 6666;
-  
+  private ServerSocket upsListener;
+  private Socket upsSocket;
+  private InputStream in;
+  private OutputStream out;
   private SeqnumFactory seqnumFactory;
   
+  /**
+   * This constructs a UPS operator
+   */
   public UpsOperator(SeqnumFactory seqnumFactory) {
     this.seqnumFactory = seqnumFactory;
   }
@@ -22,12 +28,12 @@ public class UpsOperator {
   /**
    * This tries to make a socket connection betweeen amazon server and the ups server 
    */
-  public long getUpsConnection(ServerSocket upsListener) throws IOException {
+  public long getUpsConnection() throws IOException {
     while (true) {
       upsListener = new ServerSocket(upsPort);
-      Socket upsSocket = upsListener.accept();
-      InputStream input = upsSocket.getInputStream();
-      OutputStream output = upsSocket.getOutputStream();
+      upsSocket = upsListener.accept();
+      in = upsSocket.getInputStream();
+      out = upsSocket.getOutputStream();
       UAConnect.Builder connectRequest = UAConnect.newBuilder();
       new MessageOperator().receiveMessage(connectRequest, input);
       if (connectRequest.hasWorldid()) {
@@ -41,6 +47,9 @@ public class UpsOperator {
     }
   }
 
+  /**
+   * This handles messages sent from the UPS server
+   */
   public void handleUpsMessage(ServerSocket upsListener) {}
 
 }

@@ -9,6 +9,9 @@ import java.util.*;
 
 public class DatabaseOperator {
 
+  /**
+   * This constructs a database operator
+   */
   public DatabaseOperator() {}
 
   /**

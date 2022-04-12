@@ -12,13 +12,8 @@ public class AmazonServer {
 
   private ThreadPoolExecutor myThreadPool;
   private SeqnumFactory seqnumFactory;
-
   private WorldOperator worldOperator;
-  
-  private ServerSocket upsListener;
   private UpsOperator upsOperator;
-
-  private ServerSocket frontendListener;
   private FrontendOperator frontendOperator;
 
   /**
@@ -52,7 +47,7 @@ public class AmazonServer {
   public void getConnection() {
     while (true) {
       try{
-        long worldid = upsOperator.getUpsConnection(upsListener);
+        long worldid = upsOperator.getUpsConnection();
         System.out.println("Connect to UPS Successfully!");
         try{
           worldOperator.getWorldConnection(worldid);
@@ -87,7 +82,7 @@ public class AmazonServer {
   public void dealFrontendMessage() {
     while (true) {
       try {
-        long seqnum = frontendOperator.handleFrontendMessage(frontendListener);
+        long seqnum = frontendOperator.handleFrontendMessage();
         if (seqnum != -1) {
           worldOperator.purchaseProduct(seqnum);
         }
@@ -104,7 +99,7 @@ public class AmazonServer {
    */
   public void dealUpsMessage() {
     while (true) {
-      upsOperator.handleUpsMessage(upsListener);
+      upsOperator.handleUpsMessage();
     }
   }
 

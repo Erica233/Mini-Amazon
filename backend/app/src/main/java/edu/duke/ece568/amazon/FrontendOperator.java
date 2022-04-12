@@ -10,11 +10,20 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class FrontendOperator {
+
   private final int frontendPort = 5678;
+  private ServerSocket frontendListener;
   
+  /**
+   * This constructs a frontend operator
+   */
   public FrontendOperator() {}
 
-  public long handleFrontendMessage(ServerSocket frontendListener) throws IOException {
+  /**
+   * This handles messages sent from the frontend,
+   * and return the package ID if received
+   */
+  public long handleFrontendMessage() throws IOException {
     try {
       frontendListener = new ServerSocket(frontendPort);
       Socket frontendSocket = frontendListener.accept();
@@ -26,11 +35,12 @@ public class FrontendOperator {
         ObjectOutputStream objectOutput = new ObjectOutputStream(output);
         objectOutput.writeBytes("received!");
         objectOutput.flush();
+        frontendSocket.close();
         return packageId;
       }
     }
     catch (IOException e) {
-      System.out.println("Send message to world: " + e);
+      System.out.println("Message from frontend: " + e);
       return -1;
     }
     return -1;

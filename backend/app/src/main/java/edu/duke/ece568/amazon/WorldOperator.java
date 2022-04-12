@@ -16,12 +16,14 @@ public class WorldOperator {
   private Socket worldSocket;
   private InputStream in;
   private OutputStream out;
-
   private SeqnumFactory seqnumFactory;
   private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private ConcurrentHashMap<Long, ScheduledExecutorService> runningService;
   private ConcurrentHashMap<Long, ScheduledFuture> runningFuture;
   
+  /**
+   * This constructs a world operator
+   */
   public WorldOperator(SeqnumFactory seqnumFactory) {
     this.seqnumFactory = seqnumFactory;
     purchasingProduct = purchasingProduct = new ConcurrentHashMap<> ();
@@ -57,6 +59,9 @@ public class WorldOperator {
     }
   }
 
+  /**
+   * This handles messages sent from the world simulator
+   */
   public void handleWorldMessage() {
     try {
       AResponses.Builder response = AResponses.newBuilder();
@@ -68,6 +73,10 @@ public class WorldOperator {
     }
   }
 
+  /**
+   * This parses different kinds of messages contained in the response,
+   * and pass them to specific methods for further operations 
+   */
   public void parseWorldMessage(AResponses message) throws IOException {
     System.out.println("Message from world: " + message);
     List<APurchaseMore> arrivedList = message.getArrivedList();
@@ -87,6 +96,9 @@ public class WorldOperator {
     }
   }
 
+  /**
+   * This purchases required products from the world simulator
+   */
   public void purchaseProduct(long packageId) throws IOException {
     APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
     long seqnum = seqnumFactory.createSeqnum();
@@ -97,9 +109,16 @@ public class WorldOperator {
     sendMessageToWorld(seqnum, command);
   }
 
+  /**
+   * This asks the world simulator for package packing, 
+   * and asks the UPS server for package pick-up
+   */
   public void packAndPickPackage(APurchaseMore arrived) {
   }
 
+  /**
+   * This sends commands to the world simulator
+   */
   public synchronized void sendMessageToWorld(long seqnum, ACommands.Builder message) {
     message.setSimspeed(200);
     Runnable send = () -> {
@@ -111,7 +130,7 @@ public class WorldOperator {
       }
     };
     ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 60, TimeUnit.SECONDS);
+    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 30, TimeUnit.SECONDS);
     runningService.put(seqnum, service);
     runningFuture.put(seqnum, future);
   }

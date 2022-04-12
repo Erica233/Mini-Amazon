@@ -9,6 +9,9 @@ import java.util.*;
 
 public class MessageOperator {
 
+  /**
+   * This constructs a message operator
+   */
   public MessageOperator() {}
 
   /**
