@@ -60,16 +60,16 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "SELECT amazon_package.warehouse_id, amazon_product.id, amazon_product.description, amazon_order.product_num" +
-                   "FROM amazon_order, amazon_package, amazon_product WHERE amazon_order.product_id=amazon_product.id AND" +
-                   "amazon_order.package_id=amazon_package.id AND amazon_package.id=" + packageId + ";";
+      String sql = "SELECT amazon_package.warehouse_id, amazon_product.id, amazon_product.description, amazon_item.product_num" +
+                   "FROM amazon_item, amazon_package, amazon_product WHERE amazon_item.product_id=amazon_product.id AND" +
+                   "amazon_item.package_id=amazon_package.id AND amazon_package.id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
       purchase.setWhnum(res.getInt("amazon_package.warehouse_id"));
       while (res.next()) {
           AProduct.Builder product = AProduct.newBuilder();
           product.setId(res.getInt("amazon_product.id"));
           product.setDescription(res.getString("amazon_product.description"));
-          product.setCount(res.getInt("amazon_order.product_num"));
+          product.setCount(res.getInt("amazon_item.product_num"));
           productList.add(product.build());
       }
       res.close();
