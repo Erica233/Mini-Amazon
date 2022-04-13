@@ -10,7 +10,6 @@ import java.util.concurrent.*;
 
 public class AmazonServer {
 
-  private ThreadPoolExecutor myThreadPool;
   private SeqnumFactory seqnumFactory;
   private WorldOperator worldOperator;
   private UpsOperator upsOperator;
@@ -21,7 +20,6 @@ public class AmazonServer {
    * This constructs an amazon server
    */
   public AmazonServer() {
-    myThreadPool = new ThreadPoolExecutor(25, 50, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
     seqnumFactory = new SeqnumFactory();
     worldOperator = new WorldOperator(seqnumFactory);
     upsOperator = new UpsOperator(seqnumFactory);
@@ -74,10 +72,27 @@ public class AmazonServer {
    * This starts to deal with messages from world simulator, ups server and frontend website
    */
   public void startService() {
-    myThreadPool.prestartAllCoreThreads();
-    dealFrontendMessage();
-    dealUpsMessage();
-    dealWorldMessage();
+    Thread th1 = new Thread() {
+      @Override()
+      public void run() {
+        dealFrontendMessage();
+      }
+    };
+    th1.start();
+    Thread th2 = new Thread() {
+      @Override()
+      public void run() {
+        dealUpsMessage();
+      }
+    };
+    th2.start();
+    Thread th3 = new Thread() {
+      @Override()
+      public void run() {
+        dealWorldMessage();
+      }
+    };
+    th3.start();
   }
 
   /**

@@ -10,7 +10,6 @@ import java.util.*;
 
 public class UpsOperator {
 
-  private final String upsHost = "vcm-24306.vm.duke.edu";
   private final int upsPort = 6666;
   private ServerSocket upsListener;
   private Socket upsSocket;
@@ -49,7 +48,7 @@ public class UpsOperator {
         AUConnected.Builder connectResponse = AUConnected.newBuilder();
         connectResponse.setWorldConnectionStatus(true);
         connectResponse.setSeqnum(connectRequest.getSeqnum());
-        new MessageOperator().sendMessage(connectResponse.build(), out);
+        new MessageOperator().sendMessage(connectResponse.build(), out);  
         return connectRequest.getWorldid();
       }
     }
