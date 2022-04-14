@@ -87,6 +87,10 @@ public class WorldOperator {
    */
   public void parseWorldMessage(AResponses message) throws IOException {
     System.out.println("Message from world: " + message);
+    List<Long> acksList = message.getAcksList();
+    for (long ack : acksList) {
+      readAcks(ack);
+    }
     List<APurchaseMore> arrivedList = message.getArrivedList();
     for (APurchaseMore arrived : arrivedList) {
       packAndPickPackage(arrived);
@@ -97,7 +101,7 @@ public class WorldOperator {
     for (AErr error : errorList) {
       System.out.println("Message from world: " + error.getErr());
     }
-    List<Long> acksList = message.getAcksList();
+    
     List<APackage> packagestatusList = message.getPackagestatusList();
     if (message.hasFinished()) {
       System.out.println("Disconnect to world!");
@@ -161,6 +165,16 @@ public class WorldOperator {
     ACommands.Builder command = ACommands.newBuilder();
     command.addTopack(topack.build());
     sendMessageToWorld(seqnum, command);
+  }
+
+  /**
+   * This stops a repetitive message sending thread with received ack number
+   */
+  public void readAcks(long ack) {
+      runningFuture.get(ack).cancel(true);
+      runningFuture.remove(ack);
+      runningService.get(ack).shutdown();
+      runningService.remove(ack);
   }
 
   /**
