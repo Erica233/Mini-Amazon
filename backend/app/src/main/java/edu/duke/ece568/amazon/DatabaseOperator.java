@@ -84,4 +84,26 @@ public class DatabaseOperator {
     return null;
   }
 
+  /**
+   * This updates package status of the specific packageId in database
+   */
+  public void updatePackageStatus(long packageId, String status) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "UPDATE amazon_order SET status=" + status + " WHERE id=" + packageId + ";";
+      ResultSet res = stmt.executeQuery(sql);
+      res.close();
+      stmt.close();
+      connection.close();
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+  }
+
 }
