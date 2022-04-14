@@ -33,7 +33,7 @@ public class FrontendOperator {
         ObjectInputStream objectInput = new ObjectInputStream(input);
         long packageId = objectInput.readLong();
         ObjectOutputStream objectOutput = new ObjectOutputStream(output);
-        objectOutput.writeBytes("received!");
+        objectOutput.writeLong(packageId);
         objectOutput.flush();
         frontendSocket.close();
         return packageId;

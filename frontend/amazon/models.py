@@ -24,7 +24,8 @@ class Package(models.Model):
     destination_y = models.IntegerField()
     truck_id = models.IntegerField(default=-1)
     ups_account = models.CharField(max_length=50, null=True)
-    status = models.CharField(max_length=50, default='Purchasing')
+    status = models.CharField(max_length=50, default='purchasing')
+    # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
 
 class Item(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
