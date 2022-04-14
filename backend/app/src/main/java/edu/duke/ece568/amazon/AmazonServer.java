@@ -9,100 +9,126 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AmazonServer {
-  private final String worldHost = "vcm-24690.vm.duke.edu";
-  private final int worldPort = 23456;
-  private Socket worldSocket;
-  private InputStream in;
-  private OutputStream out;
 
-  private Socket upsSocket;
-  private final String upsHost = "vcm-24306.vm.duke.edu";
-  private final int upsPort = 8888;
-
-  private final int frontendPort = 6666;
-
-  private final List<AInitWarehouse> warehouseList;
-  private long seqnum;
-
-  private ThreadPoolExecutor myThreadPool;
+  private SeqnumFactory seqnumFactory;
+  private WorldOperator worldOperator;
+  private UpsOperator upsOperator;
+  private FrontendOperator frontendOperator;
+  private WorldUpsSwitcher worldUpsSwitcher;
 
   /**
    * This constructs an amazon server
    */
   public AmazonServer() {
-    seqnum = 1;
-    myThreadPool = new ThreadPoolExecutor(50, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-    warehouseList = new databaseOperator().getWarehouse();
-    System.out.println("Warehouse numbers: " + warehouseList.size());
+    seqnumFactory = new SeqnumFactory();
+    worldOperator = new WorldOperator(seqnumFactory);
+    upsOperator = new UpsOperator(seqnumFactory);
+    frontendOperator = new FrontendOperator();
+    worldUpsSwitcher = new WorldUpsSwitcher(worldOperator, upsOperator);
+    worldOperator.setSwitcher(worldUpsSwitcher);
+    upsOperator.setSwitcher(worldUpsSwitcher);
   }
 
+  /**
+   * This starts an amazon server
+   */
   public void runServer() {
+    System.out.println("Ready to get connection!");
     while(true) {
-      try{
-        getWorldConnection();
-        break;
-      }
-      catch (Exception e) {
-        System.out.println("World connection: " + e);
-      }
+      getConnection();
+      break;
     }
+    System.out.println("Service start!");
+    startService();
     System.out.println("Finish Successfully!");
   }
 
   /**
-   * This sends a goolge protocol buffer message through socket,
-   * adjusts from the C++ version example provided in the project pdf
-   */ 
-  public <T extends GeneratedMessageV3> boolean sendMessage(T message, OutputStream output) throws IOException { 
-    try {
-      byte[] rawData = message.toByteArray();
-      int size = rawData.length;
-      CodedOutputStream codedOutput = CodedOutputStream.newInstance(output);
-      codedOutput.writeUInt32NoTag(size); // writeRawVarint32() is deprecated, use writeUInt32NoTag() instead
-      message.writeTo(codedOutput);
-      codedOutput.flush();
-      return true;
-    }
-    catch (IOException e) {
-      System.out.println("Send message: " + e);
-      return false;
-    }
-  }
-
-  /**
-   * This receives a goolge protocol buffer message through socket,
-   * adjusts from the C++ versin example provided in the project pdf
-   */ 
-  public <T extends GeneratedMessageV3.Builder<?>> boolean receiveMessage(T message, InputStream input) throws IOException {
-    try {
-      CodedInputStream codedInput = CodedInputStream.newInstance(input);
-      int size = codedInput.readRawVarint32();
-      int limit = codedInput.pushLimit(size);
-      message.mergeFrom(codedInput);
-      codedInput.popLimit(limit);
-      return true;
-    }
-    catch (IOException e) {
-      System.out.println("Receive message: " + e);
-      return false;
-    }
-  }
-
-  /**
-   * This tries to make a socket connection betweeen amazon server and the world simulator 
+   * This tries to enable amazon server's connection with world simulator and ups server 
    */
-  public void getWorldConnection() throws IOException {
-    this.worldSocket = new Socket(worldHost, worldPort);
-    in = worldSocket.getInputStream();
-    out = worldSocket.getOutputStream();
-    AConnect.Builder connectRequest = AConnect.newBuilder();
-    //connectRequest.setWorldid(1);
-    connectRequest.addAllInitwh(warehouseList);
-    connectRequest.setIsAmazon(true);
-    AConnected.Builder connectResponse = AConnected.newBuilder();
-    sendMessage(connectRequest.build(), out);
-    receiveMessage(connectResponse, in);
-    System.out.println("World connection: worldid is " + connectResponse.getWorldid());
-    System.out.println("World connection: " + connectResponse.getResult());
+  public void getConnection() {
+    while (true) {
+      try{
+        long worldid = upsOperator.getUpsConnection();
+        System.out.println("Connect to UPS Successfully!");
+        try{
+          worldOperator.getWorldConnection(worldid);
+          System.out.println("Connect to world Successfully!");
+          break;
+        }
+        catch (IOException e) {
+          System.out.println("World connection: " + e);
+          continue;
+        }
+      }
+      catch (IOException e) {
+        System.out.println("UPS connection: " + e);
+        continue;
+      }    
+    }
   }
+
+  /**
+   * This starts to deal with messages from world simulator, ups server and frontend website
+   */
+  public void startService() {
+    Thread th1 = new Thread() {
+      @Override()
+      public void run() {
+        dealFrontendMessage();
+      }
+    };
+    th1.start();
+    Thread th2 = new Thread() {
+      @Override()
+      public void run() {
+        dealUpsMessage();
+      }
+    };
+    th2.start();
+    Thread th3 = new Thread() {
+      @Override()
+      public void run() {
+        dealWorldMessage();
+      }
+    };
+    th3.start();
+  }
+
+  /**
+   * This deals with messages from frontend website
+   */
+  public void dealFrontendMessage() {
+    while (true) {
+      try {
+        long seqnum = frontendOperator.handleFrontendMessage();
+        if (seqnum != -1) {
+          worldOperator.purchaseProduct(seqnum);
+        }
+      }
+      catch (IOException e) {
+        System.out.println("Message from frontend: " + e);
+        continue;
+      }
+    }
+  }
+
+  /**
+   * This deals with messages from ups server
+   */
+  public void dealUpsMessage() {
+    while (true) {
+      upsOperator.handleUpsMessage();
+    }
+  }
+
+   /**
+   * This deals with messages from world simulator
+   */
+  public void dealWorldMessage() {
+    while (true) {
+      worldOperator.handleWorldMessage();
+    }
+  }
+
 }
