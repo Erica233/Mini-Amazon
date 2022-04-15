@@ -23,4 +23,17 @@ public class WorldUpsSwitcher {
   public void requestPickPackage(long packageId, APurchaseMore arrived) {
     upsOperator.pickPackage(packageId, arrived);
   }
+
+  /**
+   * This receives a request for loading package from the upsOperator and 
+   * asks the worldOperator for package loading
+   */
+  public void requestLoadPackage(long packageId, int truckId) {
+    worldOperator.loadPackage(packageId, truckId);
+  }
+
+  public void requestDelivery(int truckId) {
+    upsOperator.deliverTruck(truckId);
+  }
+
 }

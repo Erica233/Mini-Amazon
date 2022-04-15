@@ -24,6 +24,7 @@ class Package(models.Model):
     destination_y = models.IntegerField()
     truck_id = models.IntegerField(default=-1)
     ups_account = models.CharField(max_length=50, null=True)
+    ups_verified = models.BooleanField(default=False)
     status = models.CharField(max_length=50, default='purchasing')
     # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
 

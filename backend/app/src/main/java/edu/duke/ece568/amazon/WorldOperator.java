@@ -49,7 +49,7 @@ public class WorldOperator {
       out = worldSocket.getOutputStream();
       AConnect.Builder connectRequest = AConnect.newBuilder();
       connectRequest.setWorldid(worldid);
-      List<AInitWarehouse> warehouseList = new DatabaseOperator().getWarehouse();
+      List<AInitWarehouse> warehouseList = new DatabaseOperator().getWarehouseList();
       connectRequest.addAllInitwh(warehouseList);
       connectRequest.setIsAmazon(true);
       new MessageOperator().sendMessage(connectRequest.build(), out);
@@ -139,8 +139,7 @@ public class WorldOperator {
   }
 
   /**
-   * This asks the world simulator for package packing, 
-   * and asks the UPS server for package pick-up
+   * This handles arrived packages
    */
   public void handleArrivedPackage(APurchaseMore arrived) {
     long packageId = -1;
@@ -186,6 +185,9 @@ public class WorldOperator {
     new DatabaseOperator().updatePackageStatus(packageId, "packing");
   }
 
+  /**
+   * This handles packed packages
+   */
   public void handleReadyPackage(APacked ready) {
     long packageId = ready.getShipid();
     new DatabaseOperator().updatePackageStatus(packageId, "packed");
@@ -195,6 +197,9 @@ public class WorldOperator {
     }
   }
 
+  /**
+   * This asks the world simulator for package loading
+   */
   public void loadPackage(long packageId, int truckId) {
     int whnum = new DatabaseOperator().getWhnum(packageId);
     long seqnum = seqnumFactory.createSeqnum();
@@ -209,7 +214,17 @@ public class WorldOperator {
     new DatabaseOperator().updatePackageStatus(packageId, "loading");
   }
 
-  public void handleLoadedPackage(ALoaded loaded) {}
+  /**
+   * This handles loaded packages
+   */
+  public void handleLoadedPackage(ALoaded loaded) {
+    long packageId = loaded.getShipid();
+    new DatabaseOperator().updatePackageStatus(packageId, "loaded");
+    int truckId = new DatabaseOperator().getTruckId(packageId);
+    if (new DatabaseOperator().checkAllPackagesLoaded(truckId)) {
+      switcher.requestDelivery(truckId);
+    }
+  }
 
   /**
    * This stops a repetitive message sending thread with received ack number
