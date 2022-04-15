@@ -91,12 +91,22 @@ public class WorldOperator {
     for (long ack : acksList) {
       readAcks(ack);
     }
+
     List<APurchaseMore> arrivedList = message.getArrivedList();
     for (APurchaseMore arrived : arrivedList) {
       packAndPickPackage(arrived);
     }
+
     List<APacked> readyList = message.getReadyList();
+    for (APacked ready : readyList) {
+      loadPackage(ready);
+    }
+    
     List<ALoaded> loadedList = message.getLoadedList();
+    for (ALoaded loaded : loadedList) {
+      deliverPackage(loaded);
+    }
+
     List<AErr> errorList = message.getErrorList();
     for (AErr error : errorList) {
       System.out.println("Message from world: " + error.getErr());
@@ -105,6 +115,13 @@ public class WorldOperator {
     List<APackage> packagestatusList = message.getPackagestatusList();
     if (message.hasFinished()) {
       System.out.println("Disconnect to world!");
+    }
+
+    List<APackage> packageStatusList = message.getPackagestatusList();
+    for (APackage packageStatus :packageStatusList) {
+      long packageId = packageStatus.getPackageid();
+      String status = packageStatus.getStatus();
+      new DatabaseOperator().updatePackageStatus(packageId, status);
     }
   }
 
@@ -145,7 +162,8 @@ public class WorldOperator {
       System.out.println("To pack package: Package not Found!");
     }
     else {
-      switcher.requestPickPackage(packageId);
+      new DatabaseOperator().updatePackageStatus(packageId, "purchased");
+      switcher.requestPickPackage(packageId, arrived);
       packPackage(packageId, arrived);
     }
   }
@@ -165,7 +183,12 @@ public class WorldOperator {
     ACommands.Builder command = ACommands.newBuilder();
     command.addTopack(topack.build());
     sendMessageToWorld(seqnum, command);
+    new DatabaseOperator().updatePackageStatus(packageId, "packing");
   }
+
+  public void loadPackage(APacked ready) {}
+
+  public void deliverPackage(ALoaded loaded) {}
 
   /**
    * This stops a repetitive message sending thread with received ack number

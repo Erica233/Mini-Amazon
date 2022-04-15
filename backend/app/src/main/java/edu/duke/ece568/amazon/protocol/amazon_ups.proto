@@ -1,4 +1,5 @@
 syntax = "proto2";
+import "world_amazon.proto";
 message UAConnect{
   required int64 worldid = 1;
   required int64 seqnum = 2;
@@ -9,18 +10,16 @@ message AUConnected{
   required int64 seqnum = 2;
 }
 
-message AUPackageInfo{
-  required int64 packageid = 1;
-  optional string upsAccount =2;
-  required string description = 3;
-  required int32 destx = 4;
-  required int32 desty = 5;
+message AUPack{
+	required APack package = 1;
+	optional string upsAccount = 2;
+	required int32 destx = 3;
+ 	required int32 desty = 4;
 }
 
 message AURequestPickup{
-  required int32 whnum = 1;
-  required AUPackageInfo amazonpackageInfo = 2;
-  required int64 seqnum = 3;
+  required AUPack pack = 1;
+  required int64 seqnum = 2;
 }
 
 message UAIsAssociated{
@@ -30,7 +29,7 @@ message UAIsAssociated{
 
 message UAReadyForPickup{
   required int32 whnum = 1;
-  repeated AUPackageInfo amazonpackageInfo = 2;
+  repeated AUPack packages = 2;
   required int32 truckid = 3;
   required int64 seqnum = 4;
 }

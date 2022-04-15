@@ -106,4 +106,78 @@ public class DatabaseOperator {
     }
   }
 
+  /**
+   * This extracts the related UPS account of the specific packageId from database if exists
+   */
+  public String getUpsAccount(long packageId) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "SELECT ups_account FROM amazon_package WHERE id=" + packageId + ";";
+      ResultSet res = stmt.executeQuery(sql);
+      String upsAccount = res.getString("ups_account");
+      res.close();
+      stmt.close();
+      connection.close();
+      return upsAccount;
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+    return null;
+  }
+
+  /**
+   * This extracts the x location of destination of the specific packageId from database
+   */
+  public int getDestx(long packageId) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "SELECT destination_x FROM amazon_package WHERE id=" + packageId + ";";
+      ResultSet res = stmt.executeQuery(sql);
+      int destx = res.getInt("destination_x");
+      res.close();
+      stmt.close();
+      connection.close();
+      return destx;
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+    return -1;
+  }
+
+  /**
+   * This extracts the y location of destination of the specific packageId from database
+   */
+  public int getDesty(long packageId) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "SELECT destination_y FROM amazon_package WHERE id=" + packageId + ";";
+      ResultSet res = stmt.executeQuery(sql);
+      int desty = res.getInt("destination_y");
+      res.close();
+      stmt.close();
+      connection.close();
+      return desty;
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+    return -1;
+  }
 }

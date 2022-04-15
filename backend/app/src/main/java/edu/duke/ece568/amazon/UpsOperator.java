@@ -59,7 +59,43 @@ public class UpsOperator {
    */
   public void handleUpsMessage() {}
 
-  public void pickPackage(long packageId) {
-    return;
+  public void pickPackage(long packageId, APurchaseMore arrived) {
+    APack.Builder pack = APack.newBuilder();
+    int whnum = arrived.getWhnum();
+    List<AProduct> things = arrived.getThingsList();
+    pack.setWhnum(whnum);
+    pack.addAllThings(things);
+    pack.setShipid(packageId);
+    pack.setSeqnum(arrived.getSeqnum());
+
+    AUPack.Builder auPack = AUPack.newBuilder();
+    String upsAccount = new DatabaseOperator().getUpsAccount(packageId);
+    int destx = new DatabaseOperator().getDestx(packageId);
+    int desty = new DatabaseOperator().getDesty(packageId);
+    auPack.setPackage(pack);
+    auPack.setUpsAccount(upsAccount);
+    auPack.setDestx(destx);
+    auPack.setDesty(desty);
+    
+    AURequestPickup.Builder request = AURequestPickup.newBuilder();
+    request.setPack(auPack);
+    long seqnum = seqnumFactory.createSeqnum();
+    request.setSeqnum(seqnum);
+
+    AUCommand.Builder command = AUCommand.newBuilder();
+    command.addPickupRequest(request);
+    sendMessageToUps(seqnum, command);
+  }
+
+  /**
+   * This sends commands to the UPS server
+   */
+  public synchronized void sendMessageToUps(long seqnum, AUCommand.Builder message) {
+    try {
+        new MessageOperator().sendMessage(message.build(), out);
+      }
+      catch (IOException e) {
+        System.out.println("Send message to world: " + e);
+      }
   }
 }
