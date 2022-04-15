@@ -180,4 +180,54 @@ public class DatabaseOperator {
     }
     return -1;
   }
+
+  /**
+   * This extracts the associated truck ID of the specific packageId from database
+   */
+  public int getTruckId(long packageId) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "SELECT truck_id FROM amazon_package WHERE id=" + packageId + ";";
+      ResultSet res = stmt.executeQuery(sql);
+      int truckId = res.getInt("truck_id");
+      res.close();
+      stmt.close();
+      connection.close();
+      return truckId;
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+    return -1;
+  }
+
+  /**
+   * This extracts the associated warehouse ID of the specific packageId from database
+   */
+  public int getWhnum(long packageId) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "SELECT warehouse_id FROM amazon_package WHERE id=" + packageId + ";";
+      ResultSet res = stmt.executeQuery(sql);
+      int whnum = res.getInt("warehouse_id");
+      res.close();
+      stmt.close();
+      connection.close();
+      return whnum;
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+    return -1;
+  }
 }

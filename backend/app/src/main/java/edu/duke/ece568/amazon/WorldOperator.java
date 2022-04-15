@@ -89,22 +89,22 @@ public class WorldOperator {
     System.out.println("Message from world: " + message);
     List<Long> acksList = message.getAcksList();
     for (long ack : acksList) {
-      readAcks(ack);
+      handleAcks(ack);
     }
 
     List<APurchaseMore> arrivedList = message.getArrivedList();
     for (APurchaseMore arrived : arrivedList) {
-      packAndPickPackage(arrived);
+      handleArrivedPackage(arrived);
     }
 
     List<APacked> readyList = message.getReadyList();
     for (APacked ready : readyList) {
-      loadPackage(ready);
+      handleReadyPackage(ready);
     }
     
     List<ALoaded> loadedList = message.getLoadedList();
     for (ALoaded loaded : loadedList) {
-      deliverPackage(loaded);
+      handleLoadedPackage(loaded);
     }
 
     List<AErr> errorList = message.getErrorList();
@@ -142,7 +142,7 @@ public class WorldOperator {
    * This asks the world simulator for package packing, 
    * and asks the UPS server for package pick-up
    */
-  public void packAndPickPackage(APurchaseMore arrived) {
+  public void handleArrivedPackage(APurchaseMore arrived) {
     long packageId = -1;
     ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
     Iterator<Long> it = keySet.iterator();
@@ -186,14 +186,35 @@ public class WorldOperator {
     new DatabaseOperator().updatePackageStatus(packageId, "packing");
   }
 
-  public void loadPackage(APacked ready) {}
+  public void handleReadyPackage(APacked ready) {
+    long packageId = ready.getShipid();
+    new DatabaseOperator().updatePackageStatus(packageId, "packed");
+    int truckId = new DatabaseOperator().getTruckId(packageId);
+    if (truckId != -1) {
+      loadPackage(packageId, truckId);
+    }
+  }
 
-  public void deliverPackage(ALoaded loaded) {}
+  public void loadPackage(long packageId, int truckId) {
+    int whnum = new DatabaseOperator().getWhnum(packageId);
+    long seqnum = seqnumFactory.createSeqnum();
+    APutOnTruck.Builder toload = APutOnTruck.newBuilder();
+    toload.setWhnum(whnum);
+    toload.setTruckid(truckId);
+    toload.setShipid(packageId);
+    toload.setSeqnum(seqnum);
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addLoad(toload.build());
+    sendMessageToWorld(seqnum, command);
+    new DatabaseOperator().updatePackageStatus(packageId, "loading");
+  }
+
+  public void handleLoadedPackage(ALoaded loaded) {}
 
   /**
    * This stops a repetitive message sending thread with received ack number
    */
-  public void readAcks(long ack) {
+  public void handleAcks(long ack) {
       runningFuture.get(ack).cancel(true);
       runningFuture.remove(ack);
       runningService.get(ack).shutdown();
