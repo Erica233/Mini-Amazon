@@ -312,7 +312,7 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "SELECT status FROM amazon_package WHERE truck_id=" + truckId + ";";
+      String sql = "SELECT status FROM amazon_package WHERE truck_id=" + truckId + " AND status!='delivered';";
       ResultSet res = stmt.executeQuery(sql);
       while (res.next()) {
         String status = res.getString("status");
@@ -333,6 +333,28 @@ public class DatabaseOperator {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
     }
     return false;
+  }
+
+/**
+   * This updates package status to 'delivering' of the specific truckId in database
+   */
+  public void updateDeliveringStatus(int truckId) {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "UPDATE amazon_order SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
+      ResultSet res = stmt.executeQuery(sql);
+      res.close();
+      stmt.close();
+      connection.close();
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
   }
 
 }

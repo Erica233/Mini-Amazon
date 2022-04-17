@@ -99,31 +99,37 @@ public class UpsOperator {
    * This asks the UPS server for package pick-up
    */
   public void pickPackage(long packageId, APurchaseMore arrived) {
-    APack.Builder pack = APack.newBuilder();
-    int whnum = arrived.getWhnum();
-    List<AProduct> things = arrived.getThingsList();
-    pack.setWhnum(whnum);
-    pack.addAllThings(things);
-    pack.setShipid(packageId);
-    pack.setSeqnum(arrived.getSeqnum());
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        APack.Builder pack = APack.newBuilder();
+        int whnum = arrived.getWhnum();
+        List<AProduct> things = arrived.getThingsList();
+        pack.setWhnum(whnum);
+        pack.addAllThings(things);
+        pack.setShipid(packageId);
+        pack.setSeqnum(arrived.getSeqnum());
 
-    AUPack.Builder auPack = AUPack.newBuilder();
-    String upsAccount = new DatabaseOperator().getUpsAccount(packageId);
-    int destx = new DatabaseOperator().getDestx(packageId);
-    int desty = new DatabaseOperator().getDesty(packageId);
-    auPack.setPackage(pack);
-    auPack.setUpsAccount(upsAccount);
-    auPack.setDestx(destx);
-    auPack.setDesty(desty);
-    
-    AURequestPickup.Builder request = AURequestPickup.newBuilder();
-    request.setPack(auPack);
-    long seqnum = seqnumFactory.createSeqnum();
-    request.setSeqnum(seqnum);
+        AUPack.Builder auPack = AUPack.newBuilder();
+        String upsAccount = new DatabaseOperator().getUpsAccount(packageId);
+        int destx = new DatabaseOperator().getDestx(packageId);
+        int desty = new DatabaseOperator().getDesty(packageId);
+        auPack.setPackage(pack);
+        auPack.setUpsAccount(upsAccount);
+        auPack.setDestx(destx);
+        auPack.setDesty(desty);
+        
+        AURequestPickup.Builder request = AURequestPickup.newBuilder();
+        request.setPack(auPack);
+        long seqnum = seqnumFactory.createSeqnum();
+        request.setSeqnum(seqnum);
 
-    AUCommand.Builder command = AUCommand.newBuilder();
-    command.addPickupRequest(request);
-    sendMessageToUps(seqnum, command);
+        AUCommand.Builder command = AUCommand.newBuilder();
+        command.addPickupRequest(request);
+        sendMessageToUps(seqnum, command);
+      }
+    };
+    th.start();
   }
 
   /**
@@ -168,14 +174,21 @@ public class UpsOperator {
   }
 
   public void deliverTruck(int truckId) {
-    AUReadyForDelivery.Builder delivery = AUReadyForDelivery.newBuilder();
-    delivery.setTruckid(truckId);
-    long seqnum = seqnumFactory.createSeqnum();
-    delivery.setSeqnum(seqnum);
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        AUReadyForDelivery.Builder delivery = AUReadyForDelivery.newBuilder();
+        delivery.setTruckid(truckId);
+        long seqnum = seqnumFactory.createSeqnum();
+        delivery.setSeqnum(seqnum);
 
-    AUCommand.Builder command = AUCommand.newBuilder();
-    command.addDeliveryReady(delivery);
-    sendMessageToUps(seqnum, command);
+        AUCommand.Builder command = AUCommand.newBuilder();
+        command.addDeliveryReady(delivery);
+        sendMessageToUps(seqnum, command);
+      }
+    };
+    th.start();
+    new DatabaseOperator().updateDeliveringStatus(truckId);
   }
 
   /**

@@ -179,18 +179,24 @@ public class WorldOperator {
    * This asks the world simulator for package packing
    */
   public void packPackage(long packageId, APurchaseMore arrived) {
-    int whnum = arrived.getWhnum();
-    List<AProduct> things = arrived.getThingsList();
-    long seqnum = seqnumFactory.createSeqnum();
-    APack.Builder topack = APack.newBuilder();
-    topack.setWhnum(whnum);
-    topack.addAllThings(things);
-    topack.setShipid(packageId);
-    topack.setSeqnum(seqnum);
-    ACommands.Builder command = ACommands.newBuilder();
-    command.addTopack(topack.build());
-    sendMessageToWorld(seqnum, command);
-    new DatabaseOperator().updatePackageStatus(packageId, "packing");
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        int whnum = arrived.getWhnum();
+        List<AProduct> things = arrived.getThingsList();
+        long seqnum = seqnumFactory.createSeqnum();
+        APack.Builder topack = APack.newBuilder();
+        topack.setWhnum(whnum);
+        topack.addAllThings(things);
+        topack.setShipid(packageId);
+        topack.setSeqnum(seqnum);
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addTopack(topack.build());
+        sendMessageToWorld(seqnum, command);
+        new DatabaseOperator().updatePackageStatus(packageId, "packing");
+      }
+    };
+    th.start();
   }
 
   /**
@@ -209,17 +215,23 @@ public class WorldOperator {
    * This asks the world simulator for package loading
    */
   public void loadPackage(long packageId, int truckId) {
-    int whnum = new DatabaseOperator().getWhnum(packageId);
-    long seqnum = seqnumFactory.createSeqnum();
-    APutOnTruck.Builder toload = APutOnTruck.newBuilder();
-    toload.setWhnum(whnum);
-    toload.setTruckid(truckId);
-    toload.setShipid(packageId);
-    toload.setSeqnum(seqnum);
-    ACommands.Builder command = ACommands.newBuilder();
-    command.addLoad(toload.build());
-    sendMessageToWorld(seqnum, command);
-    new DatabaseOperator().updatePackageStatus(packageId, "loading");
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        int whnum = new DatabaseOperator().getWhnum(packageId);
+        long seqnum = seqnumFactory.createSeqnum();
+        APutOnTruck.Builder toload = APutOnTruck.newBuilder();
+        toload.setWhnum(whnum);
+        toload.setTruckid(truckId);
+        toload.setShipid(packageId);
+        toload.setSeqnum(seqnum);
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addLoad(toload.build());
+        sendMessageToWorld(seqnum, command);
+        new DatabaseOperator().updatePackageStatus(packageId, "loading");
+      }
+    };
+    th.start();
   }
 
   /**
