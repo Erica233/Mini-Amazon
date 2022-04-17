@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Item
 
 products = [
     {
@@ -16,7 +17,7 @@ products = [
 
 def home(request):
     context = {
-        'products': products
+        'products': Item.objects.all()
     }
     return render(request, 'amazon/home.html', context)
 

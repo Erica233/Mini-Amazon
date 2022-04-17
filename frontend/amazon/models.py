@@ -11,7 +11,7 @@ class Item(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     #product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    product_num = models.IntegerField()
+    product_num = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=3, decimal_places=1)
     #package = models.ForeignKey(Package, on_delete=models.CASCADE)
 
