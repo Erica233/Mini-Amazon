@@ -247,6 +247,25 @@ public class WorldOperator {
   }
 
   /**
+   * This queries the status of a package
+   */
+  public void queryPackage(int packageId) {
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        AQuery.Builder query = AQuery.newBuilder();
+        query.setPackageid(packageId);
+        long seqnum = seqnumFactory.createSeqnum();
+        query.setSeqnum(seqnum);
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addQueries(query.build());
+        sendMessageToWorld(seqnum, command);
+      }
+    };
+    th.start();
+  }
+
+  /**
    * This stops a repetitive message sending thread with received ack number
    */
   public void handleAcks(long ack) {

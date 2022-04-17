@@ -173,6 +173,9 @@ public class UpsOperator {
     }
   }
 
+  /**
+   * This asks the UPS server to send the truck for delivery
+   */
   public void deliverTruck(int truckId) {
     Thread th = new Thread() {
       @Override()

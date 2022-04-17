@@ -32,6 +32,10 @@ public class WorldUpsSwitcher {
     worldOperator.loadPackage(packageId, truckId);
   }
 
+  /**
+   * This receives a request for delivering truck from the worldOperator and 
+   * asks the upsOperator for truck delivery
+   */
   public void requestDelivery(int truckId) {
     upsOperator.deliverTruck(truckId);
   }
