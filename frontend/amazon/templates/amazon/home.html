@@ -2,8 +2,18 @@
 {% block content %}
     <h1>Amazon Home</h1>
     {% for product in products %}
-        <h1>{{ product.name }}</h1>
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#">{{ product.seller }}</a>
+                </div>
+                <h2><a class="article-title" href="#">{{ product.name }}</a></h2>
+                <p class="article-content">{{ product.price }}</p>
+            </div>
+        </article>
+    <!-- <h1>{{ product.name }}</h1>
         <p>At price: {{ product.price }}</p>
-        <p>By {{ product.seller }}</p>
+        <p>By {{ product.seller }}</p> -->
+
     {% endfor %}
 {% endblock content %}
