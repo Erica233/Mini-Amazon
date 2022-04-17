@@ -32,10 +32,10 @@ public class FrontendOperator {
         OutputStream output = frontendSocket.getOutputStream();
         ObjectInputStream objectInput = new ObjectInputStream(input);
         long packageId = objectInput.readLong();
-        ObjectOutputStream objectOutput = new ObjectOutputStream(output);
+        /*ObjectOutputStream objectOutput = new ObjectOutputStream(output);
         objectOutput.writeLong(packageId);
         objectOutput.flush();
-        frontendSocket.close();
+        frontendSocket.close();*/
         return packageId;
       }
     }

@@ -129,41 +129,49 @@ public class WorldOperator {
    * This purchases required products from the world simulator
    */
   public void purchaseProduct(long packageId) throws IOException {
-    APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
-    long seqnum = seqnumFactory.createSeqnum();
-    purchase.setSeqnum(seqnum);
-    purchasingProduct.put(packageId, purchase.build());
-    ACommands.Builder command = ACommands.newBuilder();
-    command.addBuy(purchase.build());
-    sendMessageToWorld(seqnum, command);
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
+        long seqnum = seqnumFactory.createSeqnum();
+        purchase.setSeqnum(seqnum);
+        purchasingProduct.put(packageId, purchase.build());
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addBuy(purchase.build());
+        sendMessageToWorld(seqnum, command);
+      }
+    };
+    th.start();
   }
 
   /**
    * This handles arrived packages
    */
   public void handleArrivedPackage(APurchaseMore arrived) {
-    long packageId = -1;
-    ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
-    Iterator<Long> it = keySet.iterator();
-    while(it.hasNext()) {
-      long id = it.next();
-      APurchaseMore purchase = purchasingProduct.get(id);
-      if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
-        packageId = id;
-        purchasingProduct.remove(id);
-        break;
+    synchronized (purchasingProduct) {
+      long packageId = -1;
+      ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
+      Iterator<Long> it = keySet.iterator();
+      while(it.hasNext()) {
+        long id = it.next();
+        APurchaseMore purchase = purchasingProduct.get(id);
+        if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
+          packageId = id;
+          purchasingProduct.remove(id);
+          break;
+        }
+        else {
+          continue;
+        }
+      }
+      if (packageId == -1) {
+        System.out.println("To pack package: Package not Found!");
       }
       else {
-        continue;
+        new DatabaseOperator().updatePackageStatus(packageId, "purchased");
+        switcher.requestPickPackage(packageId, arrived);
+        packPackage(packageId, arrived);
       }
-    }
-    if (packageId == -1) {
-      System.out.println("To pack package: Package not Found!");
-    }
-    else {
-      new DatabaseOperator().updatePackageStatus(packageId, "purchased");
-      switcher.requestPickPackage(packageId, arrived);
-      packPackage(packageId, arrived);
     }
   }
 
