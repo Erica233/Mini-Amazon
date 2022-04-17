@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    {% if title %}
+        <title>Amazon Home - {{ title }}</title>
+    {% else %}
+        <title>Amazon Home</title>
+    {% endif %}
 </head>
 <body>
     <h1>Amazon Home</h1>

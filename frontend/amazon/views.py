@@ -21,4 +21,4 @@ def home(request):
     return render(request, 'amazon/home.html', context)
 
 def about(request):
-    return render(request, 'amazon/about.html')
+    return render(request, 'amazon/about.html', {'title': 'About'})
