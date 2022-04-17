@@ -31,13 +31,14 @@ ALLOWED_HOSTS = ['vcm-25189.vm.duke.edu', 'vcm-24690.vm.duke.edu', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'amazon.apps.AmazonConfig',
+    'user.apps.UserConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'amazon.apps.AmazonConfig',
 ]
 
 MIDDLEWARE = [

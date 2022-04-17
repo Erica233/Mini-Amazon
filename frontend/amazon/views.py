@@ -2,10 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def home(request):
-    return HttpResponse("<h1>Amazon Home</h1>")
+    return render(request, 'amazon/home.html')
 
 def about(request):
-    return HttpResponse("<h1>Amazon About</h1>")
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return render(request, 'amazon/about.html')
