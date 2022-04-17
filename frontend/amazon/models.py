@@ -1,3 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+"""class Product(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    #category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=3, decimal_places=1)"""
+
+class Item(models.Model):
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE)
+    #product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    product_num = models.IntegerField()
+    price = models.DecimalField(max_digits=3, decimal_places=1)
+    #package = models.ForeignKey(Package, on_delete=models.CASCADE)
+
+
