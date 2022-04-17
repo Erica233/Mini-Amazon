@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-        {% if title %}
-        <title>Amazon About - {{ title }}</title>
-    {% else %}
-        <title>Amazon About</title>
-    {% endif %}
-</head>
-<body>
+{% extends "amazon/base.html" %}
+{% block content %}
     <h1>Amazon About</h1>
-</body>
-</html>
+{% endblock content %}
