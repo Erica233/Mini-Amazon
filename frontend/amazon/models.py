@@ -15,4 +15,7 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=3, decimal_places=1)
     #package = models.ForeignKey(Package, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
