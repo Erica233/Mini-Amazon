@@ -17,11 +17,11 @@ ul {
 }
 
 .site-header .navbar-nav .nav-link {
-  color: #cbd5db;
+  color: #333029;
 }
 
 .site-header .navbar-nav .nav-link:hover {
-  color: #ffffff;
+  color: #5c574a;
 }
 
 .site-header .navbar-nav .nav-link.active {
