@@ -12,16 +12,16 @@
 
     <link rel="stylesheet" type="text/css"href="{% static 'amazon/main.css' %}">
     {% if title %}
-    <title>Amazon - {{ title }}</title>
+    <title>Mini-Amazon - {{ title }}</title>
     {% else %}
-    <title>Amazon</title>
+    <title>Mini-Amazon</title>
     {% endif %}
 </head>
 <body>
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="{% url 'amazon-home' %}">Amazon Homepage</a>
+                <a class="navbar-brand mr-4" href="{% url 'amazon-home' %}">Mini-Amazon Homepage</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                         aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
