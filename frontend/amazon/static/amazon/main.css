@@ -28,7 +28,7 @@ ul {
   font-weight: 500;
 }
 
-.navbar-right {
+.navbar-nav .navbar-right {
   float: right;
 }
 
