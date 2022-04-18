@@ -132,3 +132,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = ['http://*.vcm-24690.vm.duke.edu:8000', 'http://*.vcm-25189.vm.duke.edu:8000', 'http://*.127.0.0.1:8000']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = 'amazon-home'
