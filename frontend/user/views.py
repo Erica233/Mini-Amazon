@@ -7,9 +7,8 @@ def register(request):
         user = UserRegisterForm(request.POST)
         if user.is_valid():
             user.save()
-            username = user.cleaned_data.get('username')
-            messages.success(request, f'Account successfully created for {username}!')
-            return redirect('amazon-home')
+            messages.success(request, f'Account created successfully! Now you can log in!')
+            return redirect('login')
     else:
         user = UserRegisterForm()
     return render(request, 'user/register.html', {'form': user})
