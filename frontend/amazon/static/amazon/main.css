@@ -28,6 +28,10 @@ ul {
   font-weight: 500;
 }
 
+.navbar-right {
+  float: right;
+}
+
 .content-section {
   background: #ffffff;
   padding: 10px 20px;
