@@ -11,5 +11,5 @@ def register(request):
             messages.success(request, f'Account successfully created for {username}!')
             return redirect('amazon-home')
     else:
-        form = UserRegisterForm()
-    return render(request, 'user/register.html', {'form': form})
+        user = UserRegisterForm()
+    return render(request, 'user/register.html', {'form': user})
