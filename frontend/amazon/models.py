@@ -12,7 +12,7 @@ class Item(models.Model):
     #product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     product_num = models.PositiveIntegerField()
-    price = models.DecimalField(max_digits=3, decimal_places=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     #package = models.ForeignKey(Package, on_delete=models.CASCADE)
 
     def __str__(self):
