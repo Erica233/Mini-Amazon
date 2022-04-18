@@ -36,16 +36,16 @@ ul {
   margin-bottom: 20px;
 }
 
-.article-title {
+.product-name {
   color: #444444;
 }
 
-a.article-title:hover {
+a.product-name:hover {
   color: #428bca;
   text-decoration: none;
 }
 
-.article-content {
+.product-content {
   white-space: pre-line;
 }
 
