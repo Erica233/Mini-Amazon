@@ -1,4 +1,14 @@
 {% extends "amazon/base.html" %}
+{% block cats %}
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">All Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Food</a>
+        </li>
+    </ul>
+{% endblock %}
 {% block content %}
     <h2>Products</h2>
     {% for product in products %}
