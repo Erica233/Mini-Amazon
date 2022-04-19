@@ -28,6 +28,10 @@ ul {
   font-weight: 500;
 }
 
+.topnav-right {
+  float: right;
+}
+
 .content-section {
   background: #ffffff;
   padding: 10px 20px;
