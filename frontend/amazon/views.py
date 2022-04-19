@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Item
+from .models import Item, Product
 #from django.views.generic import ListView
 
 def home(request):
     context = {
-        'products': Item.objects.all()
+        'products': Product.objects.all()
     }
     return render(request, 'amazon/home.html', context)
 

@@ -1,16 +1,16 @@
 from django.db import models
 
-class User(models.Model):
+'''class User(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
-    email = models.CharField(max_length=50)
+    email = models.CharField(max_length=50)'''
 
 class Warehouse(models.Model):
     location_x = models.IntegerField()
     location_y = models.IntegerField()
 
-class Category(models.Model):
-    category = models.CharField(max_length=50)
+'''class Category(models.Model):
+    category = models.CharField(max_length=50)'''
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
