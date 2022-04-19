@@ -12,11 +12,15 @@ def home(request):
 def about(request):
     return render(request, 'amazon/about.html', {'title': 'About'})
 
+def allProducts(request):
+    context = {
+        'categories': Category.objects.all(),
+        'products': Product.object.all()
+    }
+    return render(request, 'amazon/products.html', context)
+
 def products(request, a_category):
-    if a_category:
-        products = Product.object.filter(category_category=a_category)
-    else:
-        products = Product.object.all()
+    products = Product.object.filter(category_category=a_category)
     context = {
         'categories': Category.objects.all(),
         'products': products
