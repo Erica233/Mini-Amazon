@@ -6,7 +6,7 @@
         </li>
         {% for category in categories %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'amazon-products' %} a_category">{{ category.category }}</a>
+                <a class="nav-link" href="{% url 'amazon-products-in-category' %} 'a_category'">{{ category.category }}</a>
             </li>
         {% endfor %}
     </ul>
