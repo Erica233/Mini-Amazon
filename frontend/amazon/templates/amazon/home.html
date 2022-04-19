@@ -4,11 +4,11 @@
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#">All Products</a>
         </li>
-        <li class="nav-item">
-            {% for category in categories %}
+        {% for category in categories %}
+            <li class="nav-item">
                 <a class="nav-link" href="#">{{ category.category }}</a>
-            {% endfor %}
-        </li>
+            </li>
+        {% endfor %}
     </ul>
 {% endblock %}
 
