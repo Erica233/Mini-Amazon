@@ -14,13 +14,15 @@
 
 {% block content %}
     <br>
-    {% for product in products %}
-        <article class="media content-section">
-            <div class="media-body">
-                <h3><a class="article-title" href="#">{{ product.name }}</a></h3>
-                <p class="article-content">{{ product.price }}</p>
-            </div>
-        </article>
-    {% endfor %}
+    {% if category.category %}
+        {% for product in products %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <h3><a class="article-title" href="#">{{ product.name }}</a></h3>
+                    <p class="article-content">{{ product.price }}</p>
+                </div>
+            </article>
+        {% endfor %}
+    {% endif %}
 {% endblock content %}
 
