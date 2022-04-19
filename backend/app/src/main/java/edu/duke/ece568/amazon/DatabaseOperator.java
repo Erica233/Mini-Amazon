@@ -312,7 +312,7 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "SELECT status FROM amazon_package WHERE truck_id=" + truckId + " AND status!='delivered';";
+      String sql = "SELECT status FROM amazon_package WHERE truck_id=" + truckId + " AND status!='delivering' AND status!='delivered';";
       ResultSet res = stmt.executeQuery(sql);
       while (res.next()) {
         String status = res.getString("status");
