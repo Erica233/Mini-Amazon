@@ -134,3 +134,4 @@ CSRF_TRUSTED_ORIGINS = ['http://*.vcm-24690.vm.duke.edu:8000', 'http://*.vcm-251
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'amazon-home'
+LOGIN_URL = 'login'
