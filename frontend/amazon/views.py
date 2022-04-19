@@ -20,7 +20,7 @@ def allProducts(request):
     return render(request, 'amazon/products.html', context)
 
 def products(request, a_category):
-    products = Product.object.filter(category_category=a_category)
+    products = Product.object.filter(category=a_category)
     context = {
         'categories': Category.objects.all(),
         'products': products
