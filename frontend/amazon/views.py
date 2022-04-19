@@ -12,5 +12,5 @@ def home(request):
 def about(request):
     return render(request, 'amazon/about.html', {'title': 'About'})
 
-'''class ProductListView(ListView):
-    model = Item'''
+'''def category(request):
+    return render(request, 'amazon/category.html', {'category': ''})'''

@@ -1,0 +1,14 @@
+{% extends "amazon/base.html" %}
+{% block content %}
+    {% if category %}
+        <h2>{{ category.name }}</h2>
+    {% endif %}
+    {% for product in products %}
+        <article class="media content-section">
+            <div class="media-body">
+                <h3><a class="article-title" href="#">{{ product.name }}</a></h3>
+                <p class="article-content">{{ product.price }}</p>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
