@@ -5,19 +5,18 @@
             <a class="nav-link active" aria-current="page" href="#">All Products</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Food</a>
+            {% for category in categories %}
+                <a class="nav-link" href="#">{{ category.name }}</a>
+            {% endfor %}
         </li>
     </ul>
 {% endblock %}
 
 {% block content %}
     <br>
-    {% for product in products %}
-        <article class="media content-section">
-            <div class="media-body">
-                <h3><a class="article-title" href="#">{{ product.name }}</a></h3>
-                <p class="article-content">{{ product.price }}</p>
-            </div>
-        </article>
-    {% endfor %}
+    {% if user.is_authenticated %}
+        <h2>Welcome, {{user.username}}!</h2>
+    {% else %}
+        <h2>Welcome, visitor!</h2>
+    {% endif %}
 {% endblock content %}
