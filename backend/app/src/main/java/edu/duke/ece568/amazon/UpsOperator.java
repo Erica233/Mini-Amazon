@@ -57,7 +57,7 @@ public class UpsOperator {
   /**
    * This handles messages sent from the UPS server
    */
-  public void handleUpsMessage() {
+  public synchronized void handleUpsMessage() {
     try {
       UACommand.Builder response = UACommand.newBuilder();
       new MessageOperator().receiveMessage(response, in);
@@ -137,9 +137,8 @@ public class UpsOperator {
    */
   public void handleArrivedTruck(UAReadyForPickup ready) {
     int truckId = ready.getTruckid();
-    List<AUPack> aupackageList = ready.getPackagesList();
-    for (AUPack aupack : aupackageList) {
-      long packageId = aupack.getPackage().getShipid();
+    List<Long> packageIdList = ready.getPackageidList();
+    for (Long packageId : packageIdList) {
       new DatabaseOperator().updateTruckId(packageId, truckId);
       String status = new DatabaseOperator().getPackageStatus(packageId);
       if (status.equals("packed")) {

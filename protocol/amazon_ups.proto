@@ -29,7 +29,7 @@ message UAIsAssociated{
 
 message UAReadyForPickup{
   required int32 whnum = 1;
-  repeated AUPack packages = 2;
+  repeated int64 packageid = 2;
   required int32 truckid = 3;
   required int64 seqnum = 4;
 }
@@ -46,7 +46,8 @@ message UAPackageDelivered{
 
 message Err{
   required string errorInfo = 1;
-  required int64 errorSeqnum = 2;	
+  required int64 originSeqnum = 2;
+  required int64 errorSeqnum = 3;	
 }
 
 message UACommand{

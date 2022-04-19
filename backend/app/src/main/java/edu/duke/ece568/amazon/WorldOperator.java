@@ -21,6 +21,7 @@ public class WorldOperator {
   private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private ConcurrentHashMap<Long, ScheduledExecutorService> runningService;
   private ConcurrentHashMap<Long, ScheduledFuture> runningFuture;
+  private Set<Long> ackedSeqnum;
   
   /**
    * This constructs a world operator
@@ -30,6 +31,8 @@ public class WorldOperator {
     purchasingProduct = purchasingProduct = new ConcurrentHashMap<> ();
     runningService = new ConcurrentHashMap<> ();
     runningFuture = new ConcurrentHashMap<> ();
+    Set<Long> set = new HashSet<Long>();
+    ackedSeqnum = Collections.synchronizedSet(set);
   }
 
   /**
@@ -70,7 +73,7 @@ public class WorldOperator {
   /**
    * This handles messages sent from the world simulator
    */
-  public void handleWorldMessage() {
+  public synchronized void handleWorldMessage() {
     try {
       AResponses.Builder response = AResponses.newBuilder();
       new MessageOperator().receiveMessage(response, in);
@@ -119,9 +122,12 @@ public class WorldOperator {
 
     List<APackage> packageStatusList = message.getPackagestatusList();
     for (APackage packageStatus :packageStatusList) {
-      long packageId = packageStatus.getPackageid();
-      String status = packageStatus.getStatus();
-      new DatabaseOperator().updatePackageStatus(packageId, status);
+      if (!ackedSeqnum.contains(packageStatus.getSeqnum())) {
+        ackedSeqnum.add(packageStatus.getSeqnum());
+        long packageId = packageStatus.getPackageid();
+        String status = packageStatus.getStatus();
+        new DatabaseOperator().updatePackageStatus(packageId, status);
+      }
     }
   }
 
@@ -148,29 +154,32 @@ public class WorldOperator {
    * This handles arrived packages
    */
   public void handleArrivedPackage(APurchaseMore arrived) {
-    synchronized (purchasingProduct) {
-      long packageId = -1;
-      ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
-      Iterator<Long> it = keySet.iterator();
-      while(it.hasNext()) {
-        long id = it.next();
-        APurchaseMore purchase = purchasingProduct.get(id);
-        if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
-          packageId = id;
-          purchasingProduct.remove(id);
-          break;
+    if (!ackedSeqnum.contains(arrived.getSeqnum())) {
+      ackedSeqnum.add(arrived.getSeqnum());
+      synchronized (purchasingProduct) {
+        long packageId = -1;
+        ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
+        Iterator<Long> it = keySet.iterator();
+        while(it.hasNext()) {
+          long id = it.next();
+          APurchaseMore purchase = purchasingProduct.get(id);
+          if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
+            packageId = id;
+            purchasingProduct.remove(id);
+            break;
+          }
+          else {
+            continue;
+          }
+        }
+        if (packageId == -1) {
+          System.out.println("To pack package: Package not Found!");
         }
         else {
-          continue;
+          new DatabaseOperator().updatePackageStatus(packageId, "purchased");
+          switcher.requestPickPackage(packageId, arrived);
+          packPackage(packageId, arrived);
         }
-      }
-      if (packageId == -1) {
-        System.out.println("To pack package: Package not Found!");
-      }
-      else {
-        new DatabaseOperator().updatePackageStatus(packageId, "purchased");
-        switcher.requestPickPackage(packageId, arrived);
-        packPackage(packageId, arrived);
       }
     }
   }
@@ -203,11 +212,14 @@ public class WorldOperator {
    * This handles packed packages
    */
   public void handleReadyPackage(APacked ready) {
-    long packageId = ready.getShipid();
-    new DatabaseOperator().updatePackageStatus(packageId, "packed");
-    int truckId = new DatabaseOperator().getTruckId(packageId);
-    if (truckId != -1) {
-      loadPackage(packageId, truckId);
+    if (!ackedSeqnum.contains(ready.getSeqnum())) {
+      ackedSeqnum.add(ready.getSeqnum());
+      long packageId = ready.getShipid();
+      new DatabaseOperator().updatePackageStatus(packageId, "packed");
+      int truckId = new DatabaseOperator().getTruckId(packageId);
+      if (truckId != -1) {
+        loadPackage(packageId, truckId);
+      }
     }
   }
 
@@ -238,11 +250,14 @@ public class WorldOperator {
    * This handles loaded packages
    */
   public void handleLoadedPackage(ALoaded loaded) {
-    long packageId = loaded.getShipid();
-    new DatabaseOperator().updatePackageStatus(packageId, "loaded");
-    int truckId = new DatabaseOperator().getTruckId(packageId);
-    if (new DatabaseOperator().checkAllPackagesLoaded(truckId)) {
-      switcher.requestDelivery(truckId);
+    if (!ackedSeqnum.contains(loaded.getSeqnum())) {
+      ackedSeqnum.add(loaded.getSeqnum());
+      long packageId = loaded.getShipid();
+      new DatabaseOperator().updatePackageStatus(packageId, "loaded");
+      int truckId = new DatabaseOperator().getTruckId(packageId);
+      if (new DatabaseOperator().checkAllPackagesLoaded(truckId)) {
+        switcher.requestDelivery(truckId);
+      }
     }
   }
 
@@ -269,10 +284,14 @@ public class WorldOperator {
    * This stops a repetitive message sending thread with received ack number
    */
   public void handleAcks(long ack) {
+    if (runningFuture.containsKey(ack)) {
       runningFuture.get(ack).cancel(true);
       runningFuture.remove(ack);
+    }
+    if (runningService.containsKey(ack)) {
       runningService.get(ack).shutdown();
       runningService.remove(ack);
+    }
   }
 
   /**
