@@ -16,6 +16,6 @@ class Item(models.Model):
     #package = models.ForeignKey(Package, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return '%s'%(self.name)
 
 
