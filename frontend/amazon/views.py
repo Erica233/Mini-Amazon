@@ -12,9 +12,9 @@ def home(request):
 def about(request):
     return render(request, 'amazon/about.html', {'title': 'About'})
 
-def category(request):
+def products(request):
     context = {
         'categories': Category.objects.all()
     }
-    return render(request, 'amazon/category.html', context)
+    return render(request, 'amazon/products.html', context)
 

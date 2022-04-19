@@ -2,7 +2,7 @@
 {% block cats %}
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">All Products</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-products' %}">All Products</a>
         </li>
         {% for category in categories %}
             <li class="nav-item">

@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     path('', views.home, name='amazon-home'),
     path('about/', views.about, name='amazon-about'),
+    path('products/', views.products, name='amazon-products'),
 ]
