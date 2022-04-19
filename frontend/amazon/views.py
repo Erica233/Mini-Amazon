@@ -15,7 +15,7 @@ def about(request):
 def allProducts(request):
     context = {
         'categories': Category.objects.all(),
-        'products': Product.object.all()
+        'products': Product.objects.all()
     }
     return render(request, 'amazon/products.html', context)
 
