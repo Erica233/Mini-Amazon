@@ -10,7 +10,7 @@
         </li>
         {% for category in categories %}
             <li class="nav-item">
-                {% if curr_nav == category %}
+                {% if curr_nav == category.category %}
                     <a class="nav-link active" href="{% url 'amazon-products-in-category' category.category %}">{{ category.category }}</a>
                 {% else %}
                     <a class="nav-link" href="{% url 'amazon-products-in-category' category.category %}">{{ category.category }}</a>
