@@ -51,10 +51,7 @@ def oneProduct(request, a_product):
         else:
             ups_verified = True
         warehouse = Warehouse.objects.get(id=1)
-        print(product_num)
-        print(type(product_num))
         package_price = product.price * int(product_num)
-        print(type(product_num))
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)

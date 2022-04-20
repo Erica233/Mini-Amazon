@@ -37,7 +37,7 @@ class Package(models.Model):
     package_price = models.DecimalField(decimal_places=2, max_digits=7)
 
     def __str__(self):
-        return '%s'%(self.owner.username)
+        return '%s %s'%(self.owner.username, self.package_price)
 
 class Item(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
