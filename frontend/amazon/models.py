@@ -34,6 +34,7 @@ class Package(models.Model):
     # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
     status = models.CharField(max_length=50, default='purchasing')
     create_time = models.DateTimeField(default=timezone.now)
+    package_price = models.DecimalField(decimal_places=2, max_digits=7)
 
     def __str__(self):
         return '%s'%(self.owner.username)

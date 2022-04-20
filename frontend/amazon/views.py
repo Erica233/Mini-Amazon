@@ -45,10 +45,16 @@ def oneProduct(request, a_product):
         product_num = request.POST['product_num']
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
-        ups_account = request.POST.get('ups_account', False)
+        ups_account = request.POST.get('ups_account', '')
+        if ups_account == '':
+            ups_verified = False
+        else:
+            ups_verified = True
         warehouse = Warehouse.objects.get(id=1)
+        package_price = product.price * product_num
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
-                                         destination_y=destination_y, ups_account=ups_account)
+                                         destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
+                                         package_price=package_price)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
         messages.add_message(request, messages.INFO, 'Order Created Successfully!')
         return HttpResponseRedirect(reverse('amazon-products'))
