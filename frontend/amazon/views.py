@@ -14,17 +14,17 @@ def about(request):
 
 def allProducts(request):
     context = {
-        'categories': Category.objects.all(),
+        'categories': Category.objects.all().order_by('-category'),
         'products': Product.objects.all()
     }
-    return render(request, 'amazon/products.html', context)
+    return render(request, 'amazon/categories.html', context)
 
 def categories(request, a_category):
     cat = Category.objects.get(category=a_category)
     products = Product.objects.filter(category_id=cat.id)
     context = {
-        'categories': Category.objects.all(),
+        'categories': Category.objects.all().order_by('-category'),
         'products': products
     }
-    return render(request, 'amazon/products.html', context)
+    return render(request, 'amazon/categories.html', context)
 
