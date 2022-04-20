@@ -43,7 +43,7 @@ class Item(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_num = models.PositiveIntegerField(default=1)
-    package = models.ForeignKey(Package, on_delete=models.CASCADE)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='items')
 
     def __str__(self):
         return '%s_%s'%(self.product.name, self.buyer.username)

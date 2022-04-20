@@ -1,0 +1,14 @@
+{% extends "amazon/base.html" %}
+{% block cats %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-orders' %}">Your Orders</a>
+        </li>
+    </ul>
+{% endblock %}
+{% block content %}
+    <br>
+    <h4>Order Detatil #{{ package.id }}</h4>
+
+    <p></p>
+{% endblock content %}

@@ -77,3 +77,16 @@ def orders(request):
         'curr_nav': 'all'
     }
     return render(request, 'amazon/orders.html', context)
+
+@login_required
+def oneOrder(request, package_id):
+    package = Package.objects.get(id=package_id)
+    items = Item.objects.get(package=package)
+    #category = Category.objects.get(category=)
+    context = {
+        'categories': Category.objects.all().order_by('-category'),
+        'items': items,
+        'package': package,
+        'curr_nav': 'all'
+    }
+    return render(request, 'amazon/orders.html', context)
