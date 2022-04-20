@@ -4,7 +4,7 @@
     {% for product in products %}
         <article class="media content-section">
             <div class="media-body">
-                <h3><a class="article-title" href="#">{{ product.name }}</a></h3>
+                <h3><a class="article-title" href="{% url 'amazon-one-product' product.name %}">{{ product.name }}</a></h3>
                 <p class="article-content">$ {{ product.price }}</p>
             </div>
         </article>

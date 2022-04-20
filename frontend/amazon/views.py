@@ -30,3 +30,12 @@ def categories(request, a_category):
     }
     return render(request, 'amazon/categories.html', context)
 
+def oneProduct(request, a_category, a_product):
+    cat = Category.objects.get(category=a_category)
+    products = Product.objects.filter(name=a_product)
+    context = {
+        'categories': Category.objects.all().order_by('-category'),
+        'products': Product.objects.all(),
+        'curr_nav': a_category
+    }
+    return render(request, 'amazon/product.html', context)
