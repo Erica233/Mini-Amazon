@@ -9,4 +9,5 @@ urlpatterns = [
     path('categories/<str:a_category>', views.categories, name='amazon-products-in-category'),
     path('product/<str:a_product>', views.oneProduct, name='amazon-one-product'),
     path('orders/', views.orders, name='amazon-orders'),
+    path('orders/<int:package_id>', views.oneOrder, name='amazon-one-order'),
 ]

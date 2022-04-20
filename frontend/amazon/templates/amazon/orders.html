@@ -29,7 +29,7 @@
                     </td>
                     <td>{{ package.package_price }}</td>
                     <td>{{ package.status }}</td>
-                    <td><a href="#">view</a></td>
+                    <td><a href="{% url 'amazon-one-order' package.id %}">view</a></td>
                 </tr>
             {% endfor %}
         </tbody>
