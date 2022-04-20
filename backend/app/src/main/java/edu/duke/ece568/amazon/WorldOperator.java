@@ -89,7 +89,6 @@ public class WorldOperator {
    * and pass them to specific methods for further operations 
    */
   public void parseWorldMessage(AResponses message) throws IOException {
-    System.out.println("Message from world: " + message);
     List<Long> acksList = message.getAcksList();
     for (long ack : acksList) {
       handleAcks(ack);
@@ -145,6 +144,7 @@ public class WorldOperator {
         ACommands.Builder command = ACommands.newBuilder();
         command.addBuy(purchase.build());
         sendMessageToWorld(seqnum, command);
+        System.out.println("Purchasing package " + packageId);
       }
     };
     th.start();
@@ -173,10 +173,11 @@ public class WorldOperator {
           }
         }
         if (packageId == -1) {
-          System.out.println("To pack package: Package not Found!");
+          System.out.println("Purchased package: package not Found!");
         }
         else {
           new DatabaseOperator().updatePackageStatus(packageId, "purchased");
+          System.out.println("Package " + packageId + " is purchased");
           switcher.requestPickPackage(packageId, arrived);
           packPackage(packageId, arrived);
         }
@@ -203,6 +204,7 @@ public class WorldOperator {
         command.addTopack(topack.build());
         sendMessageToWorld(seqnum, command);
         new DatabaseOperator().updatePackageStatus(packageId, "packing");
+        System.out.println("Packing package " + packageId);
       }
     };
     th.start();
@@ -216,6 +218,7 @@ public class WorldOperator {
       ackedSeqnum.add(ready.getSeqnum());
       long packageId = ready.getShipid();
       new DatabaseOperator().updatePackageStatus(packageId, "packed");
+      System.out.println("Package " + packageId + " is packed");
       int truckId = new DatabaseOperator().getTruckId(packageId);
       if (truckId != -1) {
         loadPackage(packageId, truckId);
@@ -241,6 +244,7 @@ public class WorldOperator {
         command.addLoad(toload.build());
         sendMessageToWorld(seqnum, command);
         new DatabaseOperator().updatePackageStatus(packageId, "loading");
+        System.out.println("Loading package " + packageId);
       }
     };
     th.start();
@@ -254,6 +258,7 @@ public class WorldOperator {
       ackedSeqnum.add(loaded.getSeqnum());
       long packageId = loaded.getShipid();
       new DatabaseOperator().updatePackageStatus(packageId, "loaded");
+      System.out.println("Package " + packageId + " is loaded");
       int truckId = new DatabaseOperator().getTruckId(packageId);
       if (new DatabaseOperator().checkAllPackagesLoaded(truckId)) {
         switcher.requestDelivery(truckId);

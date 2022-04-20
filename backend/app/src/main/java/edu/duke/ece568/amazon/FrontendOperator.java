@@ -32,6 +32,7 @@ public class FrontendOperator {
         OutputStream output = frontendSocket.getOutputStream();
         ObjectInputStream objectInput = new ObjectInputStream(input);
         long packageId = objectInput.readLong();
+        System.out.println("Receive package " + packageId + " from frontend");
         /*ObjectOutputStream objectOutput = new ObjectOutputStream(output);
         objectOutput.writeLong(packageId);
         objectOutput.flush();

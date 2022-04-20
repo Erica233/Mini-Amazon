@@ -73,7 +73,6 @@ public class UpsOperator {
    * and pass them to specific methods for further operations 
    */
   public void parseUpsMessage(UACommand message) throws IOException {
-    System.out.println("Message from UPS: " + message);
     List<UAReadyForPickup> pickupReadyList = message.getPickupReadyList();
     for (UAReadyForPickup ready : pickupReadyList) {
       handleArrivedTruck(ready);
@@ -127,6 +126,7 @@ public class UpsOperator {
         AUCommand.Builder command = AUCommand.newBuilder();
         command.addPickupRequest(request);
         sendMessageToUps(seqnum, command);
+        System.out.println("Request for picking package " + packageId);
       }
     };
     th.start();
@@ -137,6 +137,7 @@ public class UpsOperator {
    */
   public void handleArrivedTruck(UAReadyForPickup ready) {
     int truckId = ready.getTruckid();
+    System.out.println("Truck " + truckId + " is arrived");
     List<Long> packageIdList = ready.getPackageidList();
     for (Long packageId : packageIdList) {
       new DatabaseOperator().updateTruckId(packageId, truckId);
@@ -153,6 +154,7 @@ public class UpsOperator {
   public void handleDeliveredPackage(UAPackageDelivered delivered) {
     long packageId = delivered.getPackageid();
     new DatabaseOperator().updatePackageStatus(packageId, "delivered");
+    System.out.println("Package " + packageId + " is delivered");
   }
 
   /**
@@ -191,6 +193,7 @@ public class UpsOperator {
     };
     th.start();
     new DatabaseOperator().updateDeliveringStatus(truckId);
+    System.out.println("Truck " + truckId + " start delivering");
   }
 
   /**
