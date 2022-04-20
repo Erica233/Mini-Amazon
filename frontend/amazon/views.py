@@ -42,7 +42,7 @@ def oneProduct(request, a_product):
     curr_cat = product.category.category
 
     if request.method == "POST":
-        product_num = request.POST.get('product_num', False)
+        product_num = request.POST['product_num']
         destination_x = request.POST.get('destination_x', False)
         destination_y = request.POST.get('destination_y', False)
         ups_account = request.POST.get('destination_y', False)
@@ -50,7 +50,7 @@ def oneProduct(request, a_product):
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
-        #messages.add_message(request, messages.INFO, 'Ride Create Successfully!')
+        messages.add_message(request, messages.INFO, 'Order Created Successfully!')
         return HttpResponseRedirect(reverse('amazon-products'))
     else:
         context = {
