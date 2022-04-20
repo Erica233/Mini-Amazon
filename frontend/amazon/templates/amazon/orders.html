@@ -18,16 +18,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                {% for package in packages %}
+            {% for package in packages %}
+                <tr>
                     <td>{{ package.create_time }}</td>
                     <td>
-
+                        {% for item in package.item.all %}
+                            {{ item.product.name }}
+                        {% endfor %}
                     </td>
                     <td>{{ package.package_price }}</td>
                     <td>{{ package.status }}</td>
-                {% endfor %}
-            </tr>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock content %}
