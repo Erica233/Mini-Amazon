@@ -15,7 +15,8 @@ def about(request):
 def allProducts(request):
     context = {
         'categories': Category.objects.all().order_by('-category'),
-        'products': Product.objects.all()
+        'products': Product.objects.all(),
+        'curr_nav': 'all'
     }
     return render(request, 'amazon/categories.html', context)
 
@@ -24,7 +25,8 @@ def categories(request, a_category):
     products = Product.objects.filter(category_id=cat.id)
     context = {
         'categories': Category.objects.all().order_by('-category'),
-        'products': products
+        'products': products,
+        'curr_nav': a_category
     }
     return render(request, 'amazon/categories.html', context)
 
