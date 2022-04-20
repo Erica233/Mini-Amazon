@@ -9,6 +9,15 @@
 {% block content %}
     <br>
     <h4>Order Detatil #{{ package.id }}</h4>
+    {% for item in items %}
+        <fieldset>
+            <legend>Product Information:</legend>
+            <p>Product:  {{ item.product.name }}</p>
+            <p>Quantity:  {{ item.product_num }}</p>
+            <p>Sale price: {{ item.product.price }}</p>
+        </fieldset>
+    {% endfor %}
+
 
     <p></p>
 {% endblock content %}
