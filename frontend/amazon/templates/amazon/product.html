@@ -8,19 +8,19 @@
             <form action="{% url 'amazon-one-product' product.name %}" method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="product_num" class="form-label">Quantity</label>
+                    <label for="product_num" class="form-label" name="product_num">Quantity</label>
                     <input type="number" min='1' class="form-control" id="product_num" required>
                 </div>
                 <div class="mb-3">
-                    <label for="destination_x" class="form-label">Destination_x</label>
+                    <label for="destination_x" class="form-label" name="destination_x">Destination_x</label>
                     <input type="number" class="form-control" id="destination_x" required>
                 </div>
                 <div class="mb-3">
-                    <label for="destination_y" class="form-label">Destination_y</label>
+                    <label for="destination_y" class="form-label" name="destination_y">Destination_y</label>
                     <input type="number" class="form-control" id="destination_y" required>
                 </div>
                 <div class="mb-3">
-                    <label for="ups_account" class="form-label">UPS Account (optional)</label>
+                    <label for="ups_account" class="form-label" name="ups_account">UPS Account (optional)</label>
                     <input type="text" class="form-control" id="ups_account">
                 </div>
                 <button type="submit" class="btn btn-primary">Buy Now</button>
