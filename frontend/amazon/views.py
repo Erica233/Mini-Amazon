@@ -19,7 +19,7 @@ def allProducts(request):
     }
     return render(request, 'amazon/products.html', context)
 
-def products(request, a_category):
+def categories(request, a_category):
     cat = Category.objects.get(category=a_category)
     products = Product.objects.filter(category_id=cat.id)
     context = {
