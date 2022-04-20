@@ -42,10 +42,10 @@ def oneProduct(request, a_product):
     curr_cat = product.category.category
 
     if request.method == "POST":
-        product_num = request.POST.get('product_num')
-        destination_x = request.POST.get('destination_x')
-        destination_y = request.POST.get('destination_y')
-        ups_account = request.POST.get('destination_y')
+        product_num = request.POST.get('product_num', False)
+        destination_x = request.POST.get('destination_x', False)
+        destination_y = request.POST.get('destination_y', False)
+        ups_account = request.POST.get('destination_y', False)
         warehouse = Warehouse.objects.get(id=1)
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account)
