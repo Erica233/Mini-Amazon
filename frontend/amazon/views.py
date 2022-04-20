@@ -51,7 +51,7 @@ def oneProduct(request, a_product):
                                          destination_y=destination_y, ups_account=ups_account)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
         #messages.add_message(request, messages.INFO, 'Ride Create Successfully!')
-        return HttpResponseRedirect(reverse('allProducts'))
+        return HttpResponseRedirect(reverse('amazon:allProducts'))
     else:
         context = {
             'categories': Category.objects.all().order_by('-category'),
