@@ -42,7 +42,7 @@ def oneProduct(request, a_product):
     curr_cat = product.category.category
 
     if request.method == "POST":
-        product_num = request.POST.get('product_num', 0)
+        product_num = request.POST['product_num']
         destination_x = request.POST.get('destination_x', False)
         destination_y = request.POST.get('destination_y', False)
         ups_account = request.POST.get('destination_y', False)
