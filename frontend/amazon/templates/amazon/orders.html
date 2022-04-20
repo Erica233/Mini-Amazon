@@ -15,6 +15,7 @@
                 <th scope="col">Items</th>
                 <th scope="col">Price</th>
                 <th scope="col">Status</th>
+                <th scope="col">Details</th>
             </tr>
         </thead>
         <tbody>
@@ -28,6 +29,7 @@
                     </td>
                     <td>{{ package.package_price }}</td>
                     <td>{{ package.status }}</td>
+                    <td><a href="#">view</a></td>
                 </tr>
             {% endfor %}
         </tbody>
