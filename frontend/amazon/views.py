@@ -1,6 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+
 from .models import Item, Product, Category, Package, Warehouse
 
 
@@ -47,7 +50,8 @@ def oneProduct(request, a_product):
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
-        return HttpResponseRedirect('amazon/categories.html')
+        #messages.add_message(request, messages.INFO, 'Ride Create Successfully!')
+        return HttpResponseRedirect(reverse('amazon/categories.html'))
     else:
         context = {
             'categories': Category.objects.all().order_by('-category'),
