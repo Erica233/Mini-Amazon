@@ -22,9 +22,7 @@
                 {% for package in packages %}
                     <td>{{ package.create_time }}</td>
                     <td>
-                        {% for item in package.item.all %}
-                            {{ item.product.name }}
-                        {% endfor %}
+
                     </td>
                     <td>{{ package.package_price }}</td>
                     <td>{{ package.status }}</td>
