@@ -25,11 +25,11 @@ class Warehouse(models.Model):
 
 class Package(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, null=True, blank=True)
     destination_x = models.IntegerField()
     destination_y = models.IntegerField()
     truck_id = models.IntegerField(default=-1)
-    ups_account = models.CharField(max_length=50, null=True, blank=True)
+    ups_account = models.CharField(max_length=50, null=True, blank=True, default='')
     ups_verified = models.BooleanField(default=False)
     status = models.CharField(max_length=50, default='purchasing')
     create_time = models.DateTimeField(default=timezone.now)

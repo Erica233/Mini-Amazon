@@ -11,18 +11,18 @@
                     <input type="number" min='1' class="form-control" id="product_num" required>
                 </div>
                 <div class="mb-3">
-                    <label for="ups_account" class="form-label">UPS Account (optional)</label>
-                    <input type="text" class="form-control" id="ups_account">
-                </div>
-                <div class="mb-3">
                     <label for="destination_x" class="form-label">Destination_x</label>
-                    <input type="number" class="form-control" id="destination_x">
+                    <input type="number" class="form-control" id="destination_x" required>
                 </div>
                 <div class="mb-3">
                     <label for="destination_y" class="form-label">Destination_y</label>
-                    <input type="number" class="form-control" id="destination_y">
+                    <input type="number" class="form-control" id="destination_y" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Buy</button>
+                <div class="mb-3">
+                    <label for="ups_account" class="form-label">UPS Account (optional)</label>
+                    <input type="text" class="form-control" id="ups_account">
+                </div>
+                <button type="submit" class="btn btn-primary">Buy Now</button>
             </form>
         </div>
     </article>

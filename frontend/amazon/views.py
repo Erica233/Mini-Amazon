@@ -1,6 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http import HttpResponse
-from .models import Item, Product, Category
+from django.http import HttpResponse, HttpResponseRedirect
+from .models import Item, Product, Category, Package, Warehouse
+
+
 #from django.views.generic import ListView
 
 def home(request):
@@ -30,12 +33,25 @@ def categories(request, a_category):
     }
     return render(request, 'amazon/categories.html', context)
 
+@login_required
 def oneProduct(request, a_product):
     product = Product.objects.get(name=a_product)
     curr_cat = product.category.category
-    context = {
-        'categories': Category.objects.all().order_by('-category'),
-        'product': product,
-        'curr_nav': curr_cat
-    }
-    return render(request, 'amazon/product.html', context)
+
+    if request.method == "POST":
+        product_num = request.POST['product_num']
+        destination_x = request.POST['destination_x']
+        destination_y = request.POST['destination_y']
+        ups_account = request.POST['destination_y']
+        warehouse = Warehouse.objects.get(id=1)
+        package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
+                                         destination_y=destination_y, ups_account=ups_account, )
+        item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
+        return HttpResponseRedirect('amazon/categories.html')
+    else:
+        context = {
+            'categories': Category.objects.all().order_by('-category'),
+            'product': product,
+            'curr_nav': curr_cat
+        }
+        return render(request, 'amazon/product.html', context)
