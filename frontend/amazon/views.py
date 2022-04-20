@@ -35,7 +35,7 @@ def oneProduct(request, a_product):
     curr_cat = product.category.category
     context = {
         'categories': Category.objects.all().order_by('-category'),
-        'products': product,
+        'product': product,
         'curr_nav': curr_cat
     }
     return render(request, 'amazon/product.html', context)
