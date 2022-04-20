@@ -31,9 +31,9 @@ class Package(models.Model):
     truck_id = models.IntegerField(default=-1)
     ups_account = models.CharField(max_length=50, null=True, blank=True, default='')
     ups_verified = models.BooleanField(default=False)
+    # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
     status = models.CharField(max_length=50, default='purchasing')
     create_time = models.DateTimeField(default=timezone.now)
-    # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
 
     def __str__(self):
         return '%s'%(self.owner.username)
