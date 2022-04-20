@@ -7,5 +7,5 @@ urlpatterns = [
     path('about/', views.about, name='amazon-about'),
     path('all_products/', views.allProducts, name='amazon-products'),
     path('categories/<str:a_category>', views.categories, name='amazon-products-in-category'),
-    path('product/<str:a_category>_<str:a_product>', views.oneProduct, name='amazon-one-product'),
+    path('product/<str:a_category>/<str:a_product>', views.oneProduct, name='amazon-one-product'),
 ]
