@@ -1,6 +1,5 @@
 {% extends "amazon/base.html" %}
 {% block cats %}
-    <br>
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'amazon-orders' %}">Your Orders</a>
@@ -8,6 +7,7 @@
     </ul>
 {% endblock %}
 {% block content %}
+    <br>
     <table class="table">
         <thead>
             <tr>
