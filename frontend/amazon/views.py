@@ -45,7 +45,7 @@ def oneProduct(request, a_product):
         ups_account = request.POST['destination_y']
         warehouse = Warehouse.objects.get(id=1)
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
-                                         destination_y=destination_y, ups_account=ups_account, )
+                                         destination_y=destination_y, ups_account=ups_account)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
         return HttpResponseRedirect('amazon/categories.html')
     else:
