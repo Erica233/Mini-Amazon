@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Category(models.Model):
     category = models.CharField(max_length=50)
@@ -28,9 +29,10 @@ class Package(models.Model):
     destination_x = models.IntegerField()
     destination_y = models.IntegerField()
     truck_id = models.IntegerField(default=-1)
-    ups_account = models.CharField(max_length=50, null=True)
+    ups_account = models.CharField(max_length=50, null=True, blank=True)
     ups_verified = models.BooleanField(default=False)
     status = models.CharField(max_length=50, default='purchasing')
+    create_time = models.DateTimeField(default=timezone.now)
     # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
 
     def __str__(self):
@@ -39,7 +41,7 @@ class Package(models.Model):
 class Item(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    product_num = models.PositiveIntegerField()
+    product_num = models.PositiveIntegerField(default=1)
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
 
     def __str__(self):
