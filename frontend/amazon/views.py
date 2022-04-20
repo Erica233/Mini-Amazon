@@ -81,7 +81,7 @@ def orders(request):
 @login_required
 def oneOrder(request, package_id):
     package = Package.objects.get(id=package_id)
-    items = package.item_set.all()
+    items = Package.item_set.all()
     context = {
         'items': items,
         'package': package
