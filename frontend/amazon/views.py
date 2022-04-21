@@ -26,7 +26,11 @@ def allProducts(request):
     return render(request, 'amazon/categories.html', context)
 
 def categories(request, a_category):
-    cat = Category.objects.get(category=a_category)
+    try:
+        cat = Category.objects.get(category=a_category)
+    except Category.DoesNotExist:
+        messages.add_message(request, messages.ERROR, 'This category does not exist!')
+        return HttpResponseRedirect(reverse('amazon-products-in-category'))
     products = Product.objects.filter(category_id=cat.id)
     context = {
         'categories': Category.objects.all().order_by('-category'),
