@@ -72,7 +72,7 @@ def oneProduct(request, a_product):
 @login_required
 def orders(request):
     items = Item.objects.all()
-    packages = Package.objects.all().order_by('create_time')
+    packages = Package.objects.all().order_by('-create_time')
     context = {
         'categories': Category.objects.all().order_by('-category'),
         'items': items,
