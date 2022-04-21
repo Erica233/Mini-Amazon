@@ -80,7 +80,7 @@ public class WorldOperator {
       parseWorldMessage(response.build());
     }
     catch (IOException e) {
-      System.out.println("Message from world: " + e);
+      //System.out.println("Message from world: " + e);
     }
   }
 

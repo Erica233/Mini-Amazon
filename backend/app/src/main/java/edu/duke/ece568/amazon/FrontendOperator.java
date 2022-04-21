@@ -28,12 +28,16 @@ public class FrontendOperator {
       frontendListener = new ServerSocket(frontendPort);
       Socket frontendSocket = frontendListener.accept();
       if (frontendSocket != null) {
-        InputStream input = frontendSocket.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(frontendSocket.getInputStream()));
+        String req = reader.readLine();
+        System.out.println("new buying request: " + req);
+        int packageId = Integer.parseInt(req);
+        /*InputStream input = frontendSocket.getInputStream();
         OutputStream output = frontendSocket.getOutputStream();
         ObjectInputStream objectInput = new ObjectInputStream(input);
         long packageId = objectInput.readLong();
         System.out.println("Receive package " + packageId + " from frontend");
-        /*ObjectOutputStream objectOutput = new ObjectOutputStream(output);
+        ObjectOutputStream objectOutput = new ObjectOutputStream(output);
         objectOutput.writeLong(packageId);
         objectOutput.flush();
         frontendSocket.close();*/
@@ -41,7 +45,7 @@ public class FrontendOperator {
       }
     }
     catch (IOException e) {
-      System.out.println("Message from frontend: " + e);
+      //System.out.println("Message from frontend: " + e);
       return -1;
     }
     return -1;

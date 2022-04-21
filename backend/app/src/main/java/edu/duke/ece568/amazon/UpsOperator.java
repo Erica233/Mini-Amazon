@@ -64,7 +64,7 @@ public class UpsOperator {
       parseUpsMessage(response.build());
     }
     catch (IOException e) {
-      System.out.println("Message from UPS: " + e);
+      //System.out.println("Message from UPS: " + e);
     }
   }
 

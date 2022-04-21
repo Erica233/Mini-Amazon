@@ -33,14 +33,13 @@ public class AmazonServer {
    * This starts an amazon server
    */
   public void runServer() {
-    System.out.println("Ready to get connection!");
+    /*System.out.println("Ready to get connection!");
     while(true) {
       getConnection();
       break;
-    }
+    }*/
     System.out.println("Service start!");
     startService();
-    System.out.println("Finish Successfully!");
   }
 
   /**
