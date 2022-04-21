@@ -1,3 +1,5 @@
+import socket
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -56,6 +58,9 @@ def oneProduct(request, a_product):
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
+        # send package_id to backend through TCP socket
+        #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #s.connect(("www.python.org", 5678))
         messages.add_message(request, messages.INFO, 'Order Created Successfully!')
         return HttpResponseRedirect(reverse('amazon-products'))
     else:
