@@ -71,8 +71,8 @@ def oneProduct(request, a_product):
 
 @login_required
 def orders(request):
-    items = Item.objects.all()
-    packages = Package.objects.all().order_by('-create_time')
+    items = Item.objects.filter(buyer=request.user)
+    packages = Package.objects.filter(owner=request.user).order_by('-create_time')
     context = {
         'categories': Category.objects.all().order_by('-category'),
         'items': items,
