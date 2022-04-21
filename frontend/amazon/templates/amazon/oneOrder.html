@@ -30,7 +30,11 @@
         <p>Destination_x:  {{ package.destination_x }}</p>
         <p>Destination_y:  {{ package.destination_y }}</p>
         {% if package.ups_verified == True %}
-            <p>UPS Account: {{ package.ups_account }}</p>
+            {% if package.ups_account == '' %}
+                <p>UPS Account: Not Specified</p>
+            {% else %}
+                <p>UPS Account: {{ package.ups_account }}</p>
+            {% endif %}
         {% else %}
             {% if package.ups_account == '' %}
                 <p>UPS Account: Not Specified</p>
