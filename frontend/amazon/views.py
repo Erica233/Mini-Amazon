@@ -61,6 +61,7 @@ def oneProduct(request, a_product):
         # send package_id to backend through TCP socket
         #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #s.connect(("www.python.org", 5678))
+        #s.close()
         messages.add_message(request, messages.INFO, 'Order Created Successfully!')
         return HttpResponseRedirect(reverse('amazon-products'))
     else:
