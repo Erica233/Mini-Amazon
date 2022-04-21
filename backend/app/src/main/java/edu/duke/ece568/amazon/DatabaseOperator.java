@@ -27,7 +27,10 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "SELECT warehouse_id FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int whnum = res.getInt("warehouse_id");
+      int whnum = -1;
+      while (res.next()) {
+        whnum = res.getInt("warehouse_id");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -122,7 +125,10 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "SELECT status FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      String status = res.getString("status");
+      String status = null;
+      while (res.next()) {
+        status = res.getString("status");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -169,7 +175,10 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "SELECT ups_account FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      String upsAccount = res.getString("ups_account");
+      String upsAccount = null;
+      while (res.next()) {
+        upsAccount = res.getString("ups_account");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -216,7 +225,10 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "SELECT destination_x FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int destx = res.getInt("destination_x");
+      int destx = -1;
+      while (res.next()) {
+        destx = res.getInt("destination_x");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -241,7 +253,10 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "SELECT destination_y FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int desty = res.getInt("destination_y");
+      int desty = -1;
+      while (res.next()) {
+        desty = res.getInt("destination_y");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -266,7 +281,10 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "SELECT truck_id FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int truckId = res.getInt("truck_id");
+      int truckId = -1;
+      while (res.next()) {
+        truckId = res.getInt("truck_id");
+      }
       res.close();
       stmt.close();
       connection.close();
