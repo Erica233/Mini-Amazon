@@ -61,7 +61,18 @@ public class UpsOperator {
     try {
       UACommand.Builder response = UACommand.newBuilder();
       new MessageOperator().receiveMessage(response, in);
-      parseUpsMessage(response.build());
+      Thread th = new Thread() {
+        @Override()
+        public void run() {
+          try {
+            parseUpsMessage(response.build());
+          }
+          catch (IOException e) {
+            System.out.println("Message from UPS: " + e);
+          }
+        }
+      };
+      th.start();
     }
     catch (IOException e) {
       //System.out.println("Message from UPS: " + e);

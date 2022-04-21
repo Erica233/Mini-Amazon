@@ -77,7 +77,18 @@ public class WorldOperator {
     try {
       AResponses.Builder response = AResponses.newBuilder();
       new MessageOperator().receiveMessage(response, in);
-      parseWorldMessage(response.build());
+      Thread th = new Thread() {
+        @Override()
+        public void run() {
+          try {
+            parseWorldMessage(response.build());
+          }
+          catch (IOException e) {
+            System.out.println("Message from world: " + e);
+          }
+        }
+      };
+      th.start();
     }
     catch (IOException e) {
       //System.out.println("Message from world: " + e);

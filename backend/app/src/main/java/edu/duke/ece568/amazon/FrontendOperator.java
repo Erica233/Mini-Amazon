@@ -17,38 +17,37 @@ public class FrontendOperator {
   /**
    * This constructs a frontend operator
    */
-  public FrontendOperator() {}
+  public FrontendOperator() throws IOException {
+    frontendListener = new ServerSocket(frontendPort);
+  }
 
   /**
    * This handles messages sent from the frontend,
    * and return the package ID if received
    */
-  public long handleFrontendMessage() throws IOException {
+  public void handleFrontendMessage(WorldOperator worldOperator) {
     try {
-      frontendListener = new ServerSocket(frontendPort);
       Socket frontendSocket = frontendListener.accept();
-      if (frontendSocket != null) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(frontendSocket.getInputStream()));
-        String req = reader.readLine();
-        System.out.println("new buying request: " + req);
-        int packageId = Integer.parseInt(req);
-        /*InputStream input = frontendSocket.getInputStream();
-        OutputStream output = frontendSocket.getOutputStream();
-        ObjectInputStream objectInput = new ObjectInputStream(input);
-        long packageId = objectInput.readLong();
-        System.out.println("Receive package " + packageId + " from frontend");
-        ObjectOutputStream objectOutput = new ObjectOutputStream(output);
-        objectOutput.writeLong(packageId);
-        objectOutput.flush();
-        frontendSocket.close();*/
-        return packageId;
-      }
+      Thread th = new Thread() {
+        @Override()
+        public void run() {
+          try {
+            InputStreamReader inputReader = new InputStreamReader(frontendSocket.getInputStream());
+            BufferedReader reader = new BufferedReader(inputReader);
+            String res = reader.readLine();
+            int packageId = Integer.parseInt(res);
+            System.out.println("Receive package " + packageId + " from frontend");
+            worldOperator.purchaseProduct(packageId);
+          } 
+          catch (IOException e) {
+            System.out.println("Message from frontend: " + e);
+          }
+        }
+      };
+      th.start();
     }
     catch (IOException e) {
-      //System.out.println("Message from frontend: " + e);
-      return -1;
+      System.out.println("Message from frontend: " + e);
     }
-    return -1;
   }
-
 }
