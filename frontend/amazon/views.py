@@ -85,7 +85,7 @@ def orders(request):
 def oneOrder(request, package_id):
     try:
         package = Package.objects.get(id=package_id)
-    except package.DoesNotExist:
+    except Package.DoesNotExist:
         messages.add_message(request, messages.ERROR, 'This order does not exist!')
         return HttpResponseRedirect(reverse('amazon-orders'))
     if package.owner != request.user:
