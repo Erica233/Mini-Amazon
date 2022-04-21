@@ -18,11 +18,11 @@
             <p>Product:  {{ item.product.name }}</p>
             <p>Category:  {{ item.product.category }}</p>
             <p>Quantity:  {{ item.product_num }}</p>
-            <p>Sale price: {{ item.product.price }}</p>
+            <p>Sale price: ${{ item.product.price }}</p>
         </fieldset>
     {% endfor %}
     <fieldset>
-        <legend>Total Price:  {{ package.package_price }}</legend>
+        <legend>Total Price:  ${{ package.package_price }}</legend>
         <p>Confirm Time:  {{ package.create_time }}</p>
     </fieldset>
     <fieldset>
