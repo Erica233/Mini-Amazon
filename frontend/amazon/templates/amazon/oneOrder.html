@@ -23,7 +23,7 @@
     {% endfor %}
     <fieldset>
         <legend>Total Price:  {{ package.package_price }}</legend>
-        <legend>Confirm Time:  {{ package.create_time }}</legend>
+        <p>Confirm Time:  {{ package.create_time }}</p>
     </fieldset>
     <fieldset>
         <legend>Logistics Information:</legend>
@@ -31,7 +31,4 @@
         <p>Destination_y:  {{ package.destination_y }}</p>
         <p>ups_account: {{ package.ups_account }}</p>
     </fieldset>
-
-
-    <p></p>
 {% endblock content %}
