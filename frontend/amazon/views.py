@@ -41,7 +41,11 @@ def categories(request, a_category):
 
 @login_required
 def oneProduct(request, a_product):
-    product = Product.objects.get(name=a_product)
+    try:
+        product = Product.objects.get(name=a_product)
+    except Product.DoesNotExist:
+        messages.add_message(request, messages.ERROR, 'This product does not exist!')
+        return HttpResponseRedirect(reverse('amazon-products'))
     curr_cat = product.category.category
 
     if request.method == "POST":
