@@ -30,12 +30,12 @@
         <p>Destination_x:  {{ package.destination_x }}</p>
         <p>Destination_y:  {{ package.destination_y }}</p>
         {% if package.ups_verified == True %}
-            <p>ups_account: {{ package.ups_account }}</p>
+            <p>UPS Account: {{ package.ups_account }}</p>
         {% else %}
             {% if package.ups_account == '' %}
-                <p>ups_account: {{ package.ups_account }}</p>
+                <p>UPS Account: Not Specified</p>
             {% else %}
-                <p>ups_account: Under Review</p>
+                <p>UPS Account: Under Review</p>
             {% endif %}
         {% endif %}
     </fieldset>
