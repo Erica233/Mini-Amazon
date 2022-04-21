@@ -30,7 +30,7 @@ def categories(request, a_category):
         cat = Category.objects.get(category=a_category)
     except Category.DoesNotExist:
         messages.add_message(request, messages.ERROR, 'This category does not exist!')
-        return HttpResponseRedirect(reverse('amazon-products-in-category'))
+        return HttpResponseRedirect(reverse('amazon-products'))
     products = Product.objects.filter(category_id=cat.id)
     context = {
         'categories': Category.objects.all().order_by('-category'),
