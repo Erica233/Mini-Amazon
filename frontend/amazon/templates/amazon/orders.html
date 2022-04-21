@@ -1,0 +1,37 @@
+{% extends "amazon/base.html" %}
+{% block cats %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-orders' %}">Your Orders</a>
+        </li>
+    </ul>
+{% endblock %}
+{% block content %}
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Ordered Time</th>
+                <th scope="col">Items</th>
+                <th scope="col">Price</th>
+                <th scope="col">Status</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for package in packages %}
+                <tr>
+                    <td>{{ package.create_time }}</td>
+                    <td>
+                        {% for i in package.items.all %}
+                            {{ i.product.name }};
+                        {% endfor %}
+                    </td>
+                    <td>{{ package.package_price }}</td>
+                    <td>{{ package.status }}</td>
+                    <td><a href="{% url 'amazon-one-order' package.id %}">view</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}
