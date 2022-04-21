@@ -29,6 +29,14 @@
         <legend>Logistics Information:</legend>
         <p>Destination_x:  {{ package.destination_x }}</p>
         <p>Destination_y:  {{ package.destination_y }}</p>
-        <p>ups_account: {{ package.ups_account }}</p>
+        {% if package.ups_verified == True %}
+            <p>ups_account: {{ package.ups_account }}</p>
+        {% else %}
+            {% if package.ups_account == '' %}
+                <p>ups_account: {{ package.ups_account }}</p>
+            {% else %}
+                <p>ups_account: Under Review</p>
+            {% endif %}
+        {% endif %}
     </fieldset>
 {% endblock content %}

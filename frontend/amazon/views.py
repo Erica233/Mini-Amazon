@@ -48,10 +48,7 @@ def oneProduct(request, a_product):
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
         ups_account = request.POST.get('ups_account', '')
-        if ups_account == '':
-            ups_verified = False
-        else:
-            ups_verified = True
+        ups_verified = False
         warehouse = Warehouse.objects.get(id=1)
         package_price = product.price * int(product_num)
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
