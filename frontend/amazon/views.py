@@ -17,9 +17,6 @@ def home(request):
     }
     return render(request, 'amazon/home.html', context)
 
-def about(request):
-    return render(request, 'amazon/about.html', {'title': 'About'})
-
 def allProducts(request):
     context = {
         'categories': Category.objects.all().order_by('-category'),
