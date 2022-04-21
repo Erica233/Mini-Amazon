@@ -57,9 +57,154 @@ public class UpsOperator {
   /**
    * This handles messages sent from the UPS server
    */
-  public void handleUpsMessage() {}
+  public synchronized void handleUpsMessage() {
+    try {
+      UACommand.Builder response = UACommand.newBuilder();
+      new MessageOperator().receiveMessage(response, in);
+      parseUpsMessage(response.build());
+    }
+    catch (IOException e) {
+      System.out.println("Message from UPS: " + e);
+    }
+  }
 
-  public void pickPackage(long packageId) {
-    return;
+  /**
+   * This parses different kinds of messages contained in the response,
+   * and pass them to specific methods for further operations 
+   */
+  public void parseUpsMessage(UACommand message) throws IOException {
+    List<UAReadyForPickup> pickupReadyList = message.getPickupReadyList();
+    for (UAReadyForPickup ready : pickupReadyList) {
+      handleArrivedTruck(ready);
+    }
+
+    List<UAPackageDelivered> deliveredList = message.getPackageDeliveredList();
+    for (UAPackageDelivered delivered : deliveredList) {
+      handleDeliveredPackage(delivered);
+    }
+
+    List<UAIsAssociated> resultList = message.getLinkResultList();
+    for (UAIsAssociated result : resultList) {
+      handleLinkResult(result);
+    }
+
+    List<Err> errorList = message.getErrorList();
+    for (Err error : errorList) {
+      System.out.println("Message from UPS: " + error.getErrorInfo());
+    }
+  }
+
+  /**
+   * This asks the UPS server for package pick-up
+   */
+  public void pickPackage(long packageId, APurchaseMore arrived) {
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        APack.Builder pack = APack.newBuilder();
+        int whnum = arrived.getWhnum();
+        List<AProduct> things = arrived.getThingsList();
+        pack.setWhnum(whnum);
+        pack.addAllThings(things);
+        pack.setShipid(packageId);
+        pack.setSeqnum(arrived.getSeqnum());
+
+        AUPack.Builder auPack = AUPack.newBuilder();
+        String upsAccount = new DatabaseOperator().getUpsAccount(packageId);
+        int destx = new DatabaseOperator().getDestx(packageId);
+        int desty = new DatabaseOperator().getDesty(packageId);
+        auPack.setPackage(pack);
+        auPack.setUpsAccount(upsAccount);
+        auPack.setDestx(destx);
+        auPack.setDesty(desty);
+        
+        AURequestPickup.Builder request = AURequestPickup.newBuilder();
+        request.setPack(auPack);
+        long seqnum = seqnumFactory.createSeqnum();
+        request.setSeqnum(seqnum);
+
+        AUCommand.Builder command = AUCommand.newBuilder();
+        command.addPickupRequest(request);
+        sendMessageToUps(seqnum, command);
+        System.out.println("Request for picking package " + packageId);
+      }
+    };
+    th.start();
+  }
+
+  /**
+   * This handles packages on an arrived truck
+   */
+  public void handleArrivedTruck(UAReadyForPickup ready) {
+    int truckId = ready.getTruckid();
+    System.out.println("Truck " + truckId + " is arrived");
+    List<Long> packageIdList = ready.getPackageidList();
+    for (Long packageId : packageIdList) {
+      new DatabaseOperator().updateTruckId(packageId, truckId);
+      String status = new DatabaseOperator().getPackageStatus(packageId);
+      if (status.equals("packed")) {
+        switcher.requestLoadPackage(packageId, truckId);
+      }
+    }
+  }
+
+  /**
+   * This handles delivered packages
+   */
+  public void handleDeliveredPackage(UAPackageDelivered delivered) {
+    long packageId = delivered.getPackageid();
+    new DatabaseOperator().updatePackageStatus(packageId, "delivered");
+    System.out.println("Package " + packageId + " is delivered");
+  }
+
+  /**
+   * This handles the result of UPS accout verification
+   */
+  public void handleLinkResult(UAIsAssociated result) {
+    long packageId = result.getPackageid();
+    boolean valid = result.getCheckResult();
+    String upsAccount = new DatabaseOperator().getUpsAccount(packageId);
+    if (!upsAccount.isEmpty()) {
+      if (valid) {
+        new DatabaseOperator().updateUpsAccount(packageId, upsAccount);
+      }
+      else {
+        new DatabaseOperator().updateUpsAccount(packageId, "invalid account");
+      }
+    }
+  }
+
+  /**
+   * This asks the UPS server to send the truck for delivery
+   */
+  public void deliverTruck(int truckId) {
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        AUReadyForDelivery.Builder delivery = AUReadyForDelivery.newBuilder();
+        delivery.setTruckid(truckId);
+        long seqnum = seqnumFactory.createSeqnum();
+        delivery.setSeqnum(seqnum);
+
+        AUCommand.Builder command = AUCommand.newBuilder();
+        command.addDeliveryReady(delivery);
+        sendMessageToUps(seqnum, command);
+      }
+    };
+    th.start();
+    new DatabaseOperator().updateDeliveringStatus(truckId);
+    System.out.println("Truck " + truckId + " start delivering");
+  }
+
+  /**
+   * This sends commands to the UPS server
+   */
+  public synchronized void sendMessageToUps(long seqnum, AUCommand.Builder message) {
+    try {
+        new MessageOperator().sendMessage(message.build(), out);
+      }
+      catch (IOException e) {
+        System.out.println("Send message to world: " + e);
+      }
   }
 }

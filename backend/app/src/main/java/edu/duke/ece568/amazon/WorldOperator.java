@@ -21,6 +21,7 @@ public class WorldOperator {
   private ConcurrentHashMap<Long, APurchaseMore> purchasingProduct;
   private ConcurrentHashMap<Long, ScheduledExecutorService> runningService;
   private ConcurrentHashMap<Long, ScheduledFuture> runningFuture;
+  private Set<Long> ackedSeqnum;
   
   /**
    * This constructs a world operator
@@ -30,6 +31,8 @@ public class WorldOperator {
     purchasingProduct = purchasingProduct = new ConcurrentHashMap<> ();
     runningService = new ConcurrentHashMap<> ();
     runningFuture = new ConcurrentHashMap<> ();
+    Set<Long> set = new HashSet<Long>();
+    ackedSeqnum = Collections.synchronizedSet(set);
   }
 
   /**
@@ -49,7 +52,7 @@ public class WorldOperator {
       out = worldSocket.getOutputStream();
       AConnect.Builder connectRequest = AConnect.newBuilder();
       connectRequest.setWorldid(worldid);
-      List<AInitWarehouse> warehouseList = new DatabaseOperator().getWarehouse();
+      List<AInitWarehouse> warehouseList = new DatabaseOperator().getWarehouseList();
       connectRequest.addAllInitwh(warehouseList);
       connectRequest.setIsAmazon(true);
       new MessageOperator().sendMessage(connectRequest.build(), out);
@@ -70,7 +73,7 @@ public class WorldOperator {
   /**
    * This handles messages sent from the world simulator
    */
-  public void handleWorldMessage() {
+  public synchronized void handleWorldMessage() {
     try {
       AResponses.Builder response = AResponses.newBuilder();
       new MessageOperator().receiveMessage(response, in);
@@ -86,17 +89,26 @@ public class WorldOperator {
    * and pass them to specific methods for further operations 
    */
   public void parseWorldMessage(AResponses message) throws IOException {
-    System.out.println("Message from world: " + message);
     List<Long> acksList = message.getAcksList();
     for (long ack : acksList) {
-      readAcks(ack);
+      handleAcks(ack);
     }
+
     List<APurchaseMore> arrivedList = message.getArrivedList();
     for (APurchaseMore arrived : arrivedList) {
-      packAndPickPackage(arrived);
+      handleArrivedPackage(arrived);
     }
+
     List<APacked> readyList = message.getReadyList();
+    for (APacked ready : readyList) {
+      handleReadyPackage(ready);
+    }
+    
     List<ALoaded> loadedList = message.getLoadedList();
+    for (ALoaded loaded : loadedList) {
+      handleLoadedPackage(loaded);
+    }
+
     List<AErr> errorList = message.getErrorList();
     for (AErr error : errorList) {
       System.out.println("Message from world: " + error.getErr());
@@ -106,47 +118,70 @@ public class WorldOperator {
     if (message.hasFinished()) {
       System.out.println("Disconnect to world!");
     }
+
+    List<APackage> packageStatusList = message.getPackagestatusList();
+    for (APackage packageStatus :packageStatusList) {
+      if (!ackedSeqnum.contains(packageStatus.getSeqnum())) {
+        ackedSeqnum.add(packageStatus.getSeqnum());
+        long packageId = packageStatus.getPackageid();
+        String status = packageStatus.getStatus();
+        new DatabaseOperator().updatePackageStatus(packageId, status);
+      }
+    }
   }
 
   /**
    * This purchases required products from the world simulator
    */
   public void purchaseProduct(long packageId) throws IOException {
-    APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
-    long seqnum = seqnumFactory.createSeqnum();
-    purchase.setSeqnum(seqnum);
-    purchasingProduct.put(packageId, purchase.build());
-    ACommands.Builder command = ACommands.newBuilder();
-    command.addBuy(purchase.build());
-    sendMessageToWorld(seqnum, command);
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        APurchaseMore.Builder purchase = new DatabaseOperator().getPurchaseProduct(packageId);
+        long seqnum = seqnumFactory.createSeqnum();
+        purchase.setSeqnum(seqnum);
+        purchasingProduct.put(packageId, purchase.build());
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addBuy(purchase.build());
+        sendMessageToWorld(seqnum, command);
+        System.out.println("Purchasing package " + packageId);
+      }
+    };
+    th.start();
   }
 
   /**
-   * This asks the world simulator for package packing, 
-   * and asks the UPS server for package pick-up
+   * This handles arrived packages
    */
-  public void packAndPickPackage(APurchaseMore arrived) {
-    long packageId = -1;
-    ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
-    Iterator<Long> it = keySet.iterator();
-    while(it.hasNext()) {
-      long id = it.next();
-      APurchaseMore purchase = purchasingProduct.get(id);
-      if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
-        packageId = id;
-        purchasingProduct.remove(id);
-        break;
+  public void handleArrivedPackage(APurchaseMore arrived) {
+    if (!ackedSeqnum.contains(arrived.getSeqnum())) {
+      ackedSeqnum.add(arrived.getSeqnum());
+      synchronized (purchasingProduct) {
+        long packageId = -1;
+        ConcurrentHashMap.KeySetView<Long, APurchaseMore> keySet = purchasingProduct.keySet();
+        Iterator<Long> it = keySet.iterator();
+        while(it.hasNext()) {
+          long id = it.next();
+          APurchaseMore purchase = purchasingProduct.get(id);
+          if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
+            packageId = id;
+            purchasingProduct.remove(id);
+            break;
+          }
+          else {
+            continue;
+          }
+        }
+        if (packageId == -1) {
+          System.out.println("Purchased package: package not Found!");
+        }
+        else {
+          new DatabaseOperator().updatePackageStatus(packageId, "purchased");
+          System.out.println("Package " + packageId + " is purchased");
+          switcher.requestPickPackage(packageId, arrived);
+          packPackage(packageId, arrived);
+        }
       }
-      else {
-        continue;
-      }
-    }
-    if (packageId == -1) {
-      System.out.println("To pack package: Package not Found!");
-    }
-    else {
-      switcher.requestPickPackage(packageId);
-      packPackage(packageId, arrived);
     }
   }
 
@@ -154,27 +189,114 @@ public class WorldOperator {
    * This asks the world simulator for package packing
    */
   public void packPackage(long packageId, APurchaseMore arrived) {
-    int whnum = arrived.getWhnum();
-    List<AProduct> things = arrived.getThingsList();
-    long seqnum = seqnumFactory.createSeqnum();
-    APack.Builder topack = APack.newBuilder();
-    topack.setWhnum(whnum);
-    topack.addAllThings(things);
-    topack.setShipid(packageId);
-    topack.setSeqnum(seqnum);
-    ACommands.Builder command = ACommands.newBuilder();
-    command.addTopack(topack.build());
-    sendMessageToWorld(seqnum, command);
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        int whnum = arrived.getWhnum();
+        List<AProduct> things = arrived.getThingsList();
+        long seqnum = seqnumFactory.createSeqnum();
+        APack.Builder topack = APack.newBuilder();
+        topack.setWhnum(whnum);
+        topack.addAllThings(things);
+        topack.setShipid(packageId);
+        topack.setSeqnum(seqnum);
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addTopack(topack.build());
+        sendMessageToWorld(seqnum, command);
+        new DatabaseOperator().updatePackageStatus(packageId, "packing");
+        System.out.println("Packing package " + packageId);
+      }
+    };
+    th.start();
+  }
+
+  /**
+   * This handles packed packages
+   */
+  public void handleReadyPackage(APacked ready) {
+    if (!ackedSeqnum.contains(ready.getSeqnum())) {
+      ackedSeqnum.add(ready.getSeqnum());
+      long packageId = ready.getShipid();
+      new DatabaseOperator().updatePackageStatus(packageId, "packed");
+      System.out.println("Package " + packageId + " is packed");
+      int truckId = new DatabaseOperator().getTruckId(packageId);
+      if (truckId != -1) {
+        loadPackage(packageId, truckId);
+      }
+    }
+  }
+
+  /**
+   * This asks the world simulator for package loading
+   */
+  public void loadPackage(long packageId, int truckId) {
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        int whnum = new DatabaseOperator().getWhnum(packageId);
+        long seqnum = seqnumFactory.createSeqnum();
+        APutOnTruck.Builder toload = APutOnTruck.newBuilder();
+        toload.setWhnum(whnum);
+        toload.setTruckid(truckId);
+        toload.setShipid(packageId);
+        toload.setSeqnum(seqnum);
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addLoad(toload.build());
+        sendMessageToWorld(seqnum, command);
+        new DatabaseOperator().updatePackageStatus(packageId, "loading");
+        System.out.println("Loading package " + packageId);
+      }
+    };
+    th.start();
+  }
+
+  /**
+   * This handles loaded packages
+   */
+  public void handleLoadedPackage(ALoaded loaded) {
+    if (!ackedSeqnum.contains(loaded.getSeqnum())) {
+      ackedSeqnum.add(loaded.getSeqnum());
+      long packageId = loaded.getShipid();
+      new DatabaseOperator().updatePackageStatus(packageId, "loaded");
+      System.out.println("Package " + packageId + " is loaded");
+      int truckId = new DatabaseOperator().getTruckId(packageId);
+      if (new DatabaseOperator().checkAllPackagesLoaded(truckId)) {
+        switcher.requestDelivery(truckId);
+      }
+    }
+  }
+
+  /**
+   * This queries the status of a package
+   */
+  public void queryPackage(int packageId) {
+    Thread th = new Thread() {
+      @Override()
+      public void run() {
+        AQuery.Builder query = AQuery.newBuilder();
+        query.setPackageid(packageId);
+        long seqnum = seqnumFactory.createSeqnum();
+        query.setSeqnum(seqnum);
+        ACommands.Builder command = ACommands.newBuilder();
+        command.addQueries(query.build());
+        sendMessageToWorld(seqnum, command);
+      }
+    };
+    th.start();
   }
 
   /**
    * This stops a repetitive message sending thread with received ack number
    */
-  public void readAcks(long ack) {
+  public void handleAcks(long ack) {
+    if (runningFuture.containsKey(ack)) {
       runningFuture.get(ack).cancel(true);
       runningFuture.remove(ack);
+    }
+    if (runningService.containsKey(ack)) {
       runningService.get(ack).shutdown();
       runningService.remove(ack);
+    }
   }
 
   /**

@@ -1,5 +1,8 @@
 package edu.duke.ece568.amazon;
 
+import edu.duke.ece568.amazon.protocol.AmazonUps.*;
+import edu.duke.ece568.amazon.protocol.WorldAmazon.*;
+
 public class WorldUpsSwitcher {
   
   private WorldOperator worldOperator;
@@ -17,7 +20,24 @@ public class WorldUpsSwitcher {
    * This receives a request for picking package from the worldOperator and 
    * asks the upsOperator for package pick up
    */
-  public void requestPickPackage(long packageId) {
-    upsOperator.pickPackage(packageId);
+  public void requestPickPackage(long packageId, APurchaseMore arrived) {
+    upsOperator.pickPackage(packageId, arrived);
   }
+
+  /**
+   * This receives a request for loading package from the upsOperator and 
+   * asks the worldOperator for package loading
+   */
+  public void requestLoadPackage(long packageId, int truckId) {
+    worldOperator.loadPackage(packageId, truckId);
+  }
+
+  /**
+   * This receives a request for delivering truck from the worldOperator and 
+   * asks the upsOperator for truck delivery
+   */
+  public void requestDelivery(int truckId) {
+    upsOperator.deliverTruck(truckId);
+  }
+
 }
