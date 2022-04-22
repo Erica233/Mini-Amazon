@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.core.mail import send_mail
 
 from .models import Item, Product, Category, Package, Warehouse
 
@@ -72,6 +73,19 @@ def oneProduct(request, a_product):
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
+        # send email to the user to notify the success of making this order
+        subject = 'Your order' + package.id + ' is confirmed - Mini-Amazon'
+        msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
+              ' and are dealing with it! Please be patient!\nOrder No.' + package.id + '\nOrder created time: ' + \
+              package.create_time + '\nItem list:\n' + product.name + ' *' + item.product_num + '\nTotal price: $' + \
+              package.package_price
+        send_mail(
+            subject,
+            msg,
+            'gaozedong1111@gmail.com',
+            [request.user.email],
+            fail_silently=False,
+        )
         # send package_id to backend through TCP socket
         #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #s.connect(("www.python.org", 5678))
