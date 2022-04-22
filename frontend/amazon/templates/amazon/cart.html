@@ -31,7 +31,7 @@
                     <td>{{ item.product.name }}</td>
                     <td>{{ item.product.price }}</td>
                     <td>{{ item.product_num }}</td>
-                    <td>${{ item.product.price * item.product_num }}</td>
+                    <td>${{ item.product.price | mul: item.product_num }}</td>
                 </tr>
             {% endfor %}
         </tbody>
