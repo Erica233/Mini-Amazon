@@ -54,6 +54,7 @@ def oneProduct(request, a_product):
         destination_y = request.POST['destination_y']
         ups_account = request.POST.get('ups_account', '')
         ups_verified = False
+        # allocate the nearest warehouse location
         warehouses = Warehouse.objects.all()
         min_dist = sys.maxint
         warehouse = Warehouse.objects.get(id=1)
