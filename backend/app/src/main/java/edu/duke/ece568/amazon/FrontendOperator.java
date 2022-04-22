@@ -7,6 +7,7 @@ import java.io.*;
 import java.sql.*;
 import java.net.*;
 import java.util.*;
+import java.lang.Long;
 import java.util.concurrent.*;
 
 public class FrontendOperator {
@@ -36,7 +37,7 @@ public class FrontendOperator {
             InputStreamReader inputReader = new InputStreamReader(in);
             BufferedReader bufferReader = new BufferedReader(inputReader);
             String buffer = bufferReader.readLine();
-            int packageId = Integer.parseInt(buffer);
+            long packageId = Long.parseLong(buffer);
             System.out.println("Receive package " + packageId + " from frontend");
             worldOperator.purchaseProduct(packageId);
           } 
