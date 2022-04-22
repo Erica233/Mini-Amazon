@@ -57,7 +57,7 @@ def oneProduct(request, a_product):
         product_num = request.POST['product_num']
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num)
         messages.add_message(request, messages.INFO, 'Add to Shopping Cart Successfully!')
-        return HttpResponseRedirect(reverse(request.path_info))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         context = {
             'categories': Category.objects.all().order_by('-category'),
