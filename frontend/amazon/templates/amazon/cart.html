@@ -24,7 +24,11 @@
                     <tr>
                         <td>{{ item.product.name }}</td>
                         <td>{{ item.product.price }}</td>
-                        <td><input type="number" class="form-control" id="product_num" name="product_num" value="{{ item.product_num }}" required><td>
+                        <td>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" id="product_num" name="product_num" value="{{ item.product_num }}" required>
+                            </div>
+                        <td>
                         <td>${{ item.item_price }}</td>
                     </tr>
                 {% endfor %}
