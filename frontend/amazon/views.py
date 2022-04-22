@@ -1,5 +1,5 @@
 import socket
-
+import sys
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -54,7 +54,14 @@ def oneProduct(request, a_product):
         destination_y = request.POST['destination_y']
         ups_account = request.POST.get('ups_account', '')
         ups_verified = False
+        warehouses = Warehouse.objects.all()
+        min_dist = sys.maxint
         warehouse = Warehouse.objects.get(id=1)
+        for wh in warehouses.iterator():
+            dist = abs(wh.location_x - destination_x) ** 2 + abs(wh.location_y - destination_y) ** 2
+            if min_dist > dist:
+                min_dist = dist
+                warehouse = wh
         package_price = product.price * int(product_num)
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
