@@ -154,6 +154,7 @@ public class DatabaseOperator {
       System.out.println("The status is: " + status);
       String sql = "UPDATE amazon_package SET status=\'" + status + "\' WHERE id=" + packageId + ";";
       stmt.executeUpdate(sql); 
+      connection.commit();
       stmt.close();
       connection.close();
     }
@@ -203,6 +204,7 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "UPDATE amazon_package SET ups_account=\'" + account + "\', ups_verified=true WHERE id=" + packageId + ";";
       stmt.executeUpdate(sql);
+      connection.commit();
       stmt.close();
       connection.close();
     }
@@ -308,6 +310,7 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "UPDATE amazon_package SET truck_id=" + truckId + "WHERE id=" + packageId + ";";
       stmt.executeUpdate(sql);
+      connection.commit();
       stmt.close();
       connection.close();
     }
@@ -364,6 +367,7 @@ public class DatabaseOperator {
       stmt = connection.createStatement();
       String sql = "UPDATE amazon_package SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
       stmt.executeUpdate(sql);
+      connection.commit();
       stmt.close();
       connection.close();
     }
