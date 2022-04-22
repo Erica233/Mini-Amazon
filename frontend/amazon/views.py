@@ -58,7 +58,7 @@ def oneProduct(request, a_product):
         min_dist = 10000
         warehouse = Warehouse.objects.get(id=1)
         for wh in warehouses.iterator():
-            dist = abs(wh.location_x - destination_x) ** 2 + abs(wh.location_y - destination_y) ** 2
+            dist = abs(wh.location_x - int(destination_x)) ** 2 + abs(wh.location_y - int(destination_y)) ** 2
             if min_dist > dist:
                 min_dist = dist
                 warehouse = wh
