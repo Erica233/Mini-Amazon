@@ -74,7 +74,7 @@ def oneProduct(request, a_product):
                                          package_price=package_price)
         item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
         # send email to the user to notify the success of making this order
-        subject = 'Your order' + str(package.id) + ' is confirmed - Mini-Amazon'
+        subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
         msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
               ' and are dealing with it! Please be patient!\n\nOrder No.' + str(package.id) + ':\nCreated Time: ' + \
               str(package.create_time) + '\n\nItem list:\n' + product.name + ' * ' + product_num + '\nTotal price: $' \
