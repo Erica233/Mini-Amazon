@@ -17,9 +17,14 @@ def home(request):
     return render(request, 'amazon/home.html', context)
 
 def allProducts(request):
+    if request.method == "POST":
+        search_products = request.POST['name']
+        products = Product.objects.filter(name__contain=search_products)
+    else:
+        products = Product.objects.all()
     context = {
         'categories': Category.objects.all().order_by('-category'),
-        'products': Product.objects.all(),
+        'products': products,
         'curr_nav': 'all'
     }
     return render(request, 'amazon/categories.html', context)
