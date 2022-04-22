@@ -48,3 +48,7 @@ class Item(models.Model):
 
     def __str__(self):
         return '%s_%s'%(self.product.name, self.buyer.username)
+
+    @property
+    def item_price(self):
+        return self.product_num * self.product.price
