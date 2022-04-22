@@ -132,6 +132,7 @@ def checkout(request):
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)
+
         item_list = "" # used for email content
         for item in items:
             package_price += item.product_num * item.product.price
