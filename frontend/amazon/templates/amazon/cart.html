@@ -31,10 +31,6 @@
             </tbody>
         </table>
         <div class="mb-3">
-            <label for="product_num" class="form-label">Quantity</label>
-            <input type="number" min='1' class="form-control" id="product_num" name="product_num" required>
-        </div>
-        <div class="mb-3">
             <label for="destination_x" class="form-label">Destination_x</label>
             <input type="number" class="form-control" id="destination_x" name="destination_x" required>
         </div>
@@ -47,6 +43,7 @@
             <input type="text" class="form-control" id="ups_account" name="ups_account">
         </div>
         Total price: ${{ item.package.package_price }}
+        <br>
         <button type="submit" class="btn btn-primary">Place Order</button>
     </form>
     <br>
