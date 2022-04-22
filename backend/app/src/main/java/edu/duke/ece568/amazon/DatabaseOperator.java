@@ -151,9 +151,9 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "UPDATE amazon_order SET status=" + status + " WHERE id=" + packageId + ";";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      System.out.println("The status is: " + status);
+      String sql = "UPDATE amazon_package SET status=\'" + status + "\' WHERE id=" + packageId + ";";
+      stmt.executeUpdate(sql); 
       stmt.close();
       connection.close();
     }
@@ -201,9 +201,8 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "UPDATE amazon_package SET ups_account=" + account + ", ups_verified=true WHERE id=" + packageId + ";";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      String sql = "UPDATE amazon_package SET ups_account=\'" + account + "\', ups_verified=true WHERE id=" + packageId + ";";
+      stmt.executeUpdate(sql);
       stmt.close();
       connection.close();
     }
@@ -308,8 +307,7 @@ public class DatabaseOperator {
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "UPDATE amazon_package SET truck_id=" + truckId + "WHERE id=" + packageId + ";";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      stmt.executeUpdate(sql);
       stmt.close();
       connection.close();
     }
@@ -364,9 +362,8 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "UPDATE amazon_order SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      String sql = "UPDATE amazon_package SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
+      stmt.executeUpdate(sql);
       stmt.close();
       connection.close();
     }

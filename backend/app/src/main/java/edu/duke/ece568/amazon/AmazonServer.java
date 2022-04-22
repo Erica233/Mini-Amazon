@@ -38,11 +38,11 @@ public class AmazonServer {
    * This starts an amazon server
    */
   public void runServer() {
-    /*System.out.println("Ready to get connection!");
+    System.out.println("Ready to get connection!");
     while(true) {
       getConnection();
       break;
-    }*/
+    }
     System.out.println("Service start!");
     startService();
   }
@@ -61,12 +61,12 @@ public class AmazonServer {
           break;
         }
         catch (IOException e) {
-          System.out.println("World connection: " + e);
+          //System.out.println("World connection: " + e);
           continue;
         }
       }
       catch (IOException e) {
-        System.out.println("UPS connection: " + e);
+        //System.out.println("UPS connection: " + e);
         continue;
       }    
     }
