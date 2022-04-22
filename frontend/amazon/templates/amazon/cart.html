@@ -30,6 +30,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        Total price: ${{ item.package.package_price }}
         <div class="mb-3">
             <label for="destination_x" class="form-label">Destination_x</label>
             <input type="number" class="form-control" id="destination_x" name="destination_x" required>
@@ -42,7 +43,6 @@
             <label for="ups_account" class="form-label">UPS Account (optional)</label>
             <input type="text" class="form-control" id="ups_account" name="ups_account">
         </div>
-        Total price: ${{ item.package.package_price }}
         <br>
         <button type="submit" class="btn btn-primary">Place Order</button>
     </form>
