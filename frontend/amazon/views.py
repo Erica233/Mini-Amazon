@@ -55,7 +55,17 @@ def oneProduct(request, a_product):
 
     if request.method == "POST":
         product_num = request.POST['product_num']
-        destination_x = request.POST['destination_x']
+        item = Item.objects.create(buyer=request.user, product=product, product_num=product_num)
+        messages.add_message(request, messages.INFO, 'Add to Shopping Cart Successfully!')
+        return HttpResponseRedirect(reverse('amazon-one-product'))
+    else:
+        context = {
+            'categories': Category.objects.all().order_by('-category'),
+            'product': product,
+            'curr_nav': curr_cat
+        }
+        return render(request, 'amazon/product.html', context)
+        '''destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
         ups_account = request.POST.get('ups_account', '')
         ups_verified = False
@@ -92,13 +102,7 @@ def oneProduct(request, a_product):
         #s.close()
         messages.add_message(request, messages.INFO, 'Order Created Successfully!')
         return HttpResponseRedirect(reverse('amazon-products'))
-    else:
-        context = {
-            'categories': Category.objects.all().order_by('-category'),
-            'product': product,
-            'curr_nav': curr_cat
-        }
-        return render(request, 'amazon/product.html', context)
+        '''
 
 @login_required
 def orders(request):
@@ -128,3 +132,12 @@ def oneOrder(request, package_id):
         'package': package
     }
     return render(request, 'amazon/oneOrder.html', context)
+
+def cart(request):
+    items = Item.objects.filter(buyer=request.user, in_cart=True)
+    packages = Package.objects.filter(owner=request.user).order_by('-create_time')
+    context = {
+        'items': items,
+        'packages': packages,
+    }
+    return render(request, 'amazon/cart.html', context)

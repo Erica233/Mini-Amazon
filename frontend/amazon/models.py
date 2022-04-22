@@ -24,12 +24,12 @@ class Warehouse(models.Model):
         return '(%s, %s)'%(self.location_x, self.location_y)
 
 class Package(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     destination_x = models.IntegerField()
     destination_y = models.IntegerField()
     truck_id = models.IntegerField(default=-1)
-    ups_account = models.CharField(max_length=50, null=True, blank=True, default='')
+    ups_account = models.CharField(max_length=50, blank=True, default='')
     ups_verified = models.BooleanField(default=False)
     # all possible status: purchasing, purchased, packing, packed, loading, loaded, delivering, delivered
     status = models.CharField(max_length=50, default='purchasing')
@@ -43,7 +43,8 @@ class Item(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_num = models.PositiveIntegerField(default=1)
-    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='items')
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='items', null=True, default=None)
+    in_cart = models.BooleanField(default=True) # False means it was ordered
 
     def __str__(self):
         return '%s_%s'%(self.product.name, self.buyer.username)
