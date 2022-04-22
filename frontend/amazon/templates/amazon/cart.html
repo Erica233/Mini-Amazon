@@ -16,7 +16,6 @@
                     <th scope="col">Items</th>
                     <th scope="col">Price</th>
                     <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,26 +28,10 @@
                                 <input type="number" class="form-control" id="product_num" name="product_num" value="{{ item.product_num }}" required>
                             </div>
                         <td>
-                        <td align="left">${{ item.item_price }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        Total price: ${{ item.package.package_price }}
-        <br>
-        <div class="mb-3">
-            <label for="destination_x" class="form-label">Destination_x</label>
-            <input type="number" class="form-control" id="destination_x" name="destination_x" required>
-        </div>
-        <div class="mb-3">
-            <label for="destination_y" class="form-label">Destination_y</label>
-            <input type="number" class="form-control" id="destination_y" name="destination_y" required>
-        </div>
-        <div class="mb-3">
-            <label for="ups_account" class="form-label">UPS Account (optional)</label>
-            <input type="text" class="form-control" id="ups_account" name="ups_account">
-        </div>
-        <br>
         <button type="submit" class="btn btn-primary">Place Order</button>
     </form>
     <br>
