@@ -1,21 +1,39 @@
 {% extends "amazon/base.html" %}
-            <form action="{% url 'amazon-one-product' product.name %}" method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="product_num" class="form-label">Quantity</label>
-                    <input type="number" min='1' class="form-control" id="product_num" name="product_num" required>
-                </div>
-                <div class="mb-3">
-                    <label for="destination_x" class="form-label">Destination_x</label>
-                    <input type="number" class="form-control" id="destination_x" name="destination_x" required>
-                </div>
-                <div class="mb-3">
-                    <label for="destination_y" class="form-label">Destination_y</label>
-                    <input type="number" class="form-control" id="destination_y" name="destination_y" required>
-                </div>
-                <div class="mb-3">
-                    <label for="ups_account" class="form-label">UPS Account (optional)</label>
-                    <input type="text" class="form-control" id="ups_account" name="ups_account">
-                </div>
-                <button type="submit" class="btn btn-primary">Buy Now</button>
-            </form>
+{% block cats %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-cart' %}">Shopping Cart</a>
+        </li>
+    </ul>
+{% endblock %}
+{% block content %}
+    <br>
+    <form action="{% url 'amazon-checkout' product.name %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="product_num" class="form-label">Quantity</label>
+            <input type="number" min='1' class="form-control" id="product_num" name="product_num" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add to Shopping Cart</button>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Items</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.product.price }}</td>
+                    <td>{{ item.product_num }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    Total price: ${{ item.package.package_price }}
+{% endblock content %}

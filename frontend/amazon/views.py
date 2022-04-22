@@ -105,6 +105,26 @@ def oneProduct(request, a_product):
         '''
 
 @login_required
+def cart(request):
+    items = Item.objects.filter(buyer=request.user, in_cart=True)
+    packages = Package.objects.filter(owner=request.user).order_by('-create_time')
+    context = {
+        'items': items,
+        'packages': packages,
+    }
+    return render(request, 'amazon/cart.html', context)
+
+@login_required
+def checkout(request):
+    items = Item.objects.filter(buyer=request.user, in_cart=True)
+    packages = Package.objects.filter(owner=request.user).order_by('-create_time')
+    context = {
+        'items': items,
+        'packages': packages,
+    }
+    return render(request, 'amazon/cart.html', context)
+
+@login_required
 def orders(request):
     items = Item.objects.filter(buyer=request.user)
     packages = Package.objects.filter(owner=request.user).order_by('-create_time')
@@ -132,12 +152,3 @@ def oneOrder(request, package_id):
         'package': package
     }
     return render(request, 'amazon/oneOrder.html', context)
-
-def cart(request):
-    items = Item.objects.filter(buyer=request.user, in_cart=True)
-    packages = Package.objects.filter(owner=request.user).order_by('-create_time')
-    context = {
-        'items': items,
-        'packages': packages,
-    }
-    return render(request, 'amazon/cart.html', context)
