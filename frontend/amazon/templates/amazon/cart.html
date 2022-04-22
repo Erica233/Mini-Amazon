@@ -22,6 +22,7 @@
                 <th scope="col">Items</th>
                 <th scope="col">Price</th>
                 <th scope="col">Quantity</th>
+                <th scope="col">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,7 @@
                     <td>{{ item.product.name }}</td>
                     <td>{{ item.product.price }}</td>
                     <td>{{ item.product_num }}</td>
+                    <td>${{ item.product.price * item.product_num }}</td>
                 </tr>
             {% endfor %}
         </tbody>
