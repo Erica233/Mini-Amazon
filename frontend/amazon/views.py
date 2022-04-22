@@ -77,7 +77,7 @@ def oneProduct(request, a_product):
         subject = 'Your order' + str(package.id) + ' is confirmed - Mini-Amazon'
         msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
               ' and are dealing with it! Please be patient!\n\nOrder No.' + str(package.id) + ':\nCreated Time: ' + \
-              str(package.create_time) + '\n\nItem list:\n    ' + product.name + ' *' + product_num + '\nTotal price: $' \
+              str(package.create_time) + '\n\nItem list:\n' + product.name + ' * ' + product_num + '\nTotal price: $' \
               + str(package_price) + '\n\nThanks,\nMini-Amazon Group'
         send_mail(
             subject,
