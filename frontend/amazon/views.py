@@ -19,7 +19,7 @@ def home(request):
 def allProducts(request):
     if request.method == "POST":
         search_products = request.POST['name']
-        products = Product.objects.filter(name__contain=search_products)
+        products = Product.objects.filter(name__icontain=search_products)
     else:
         products = Product.objects.all()
     context = {
