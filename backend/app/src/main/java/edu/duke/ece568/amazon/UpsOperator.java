@@ -115,6 +115,9 @@ public class UpsOperator {
     List<Err> errorList = message.getErrorList();
     for (Err error : errorList) {
       System.out.println("Message from UPS: " + error.getErrorInfo());
+      AUCommand.Builder command = AUCommand.newBuilder();
+      command.addAcks(error.getErrorSeqnum());
+      sendAcksToUps(command);
     }
   }
 
@@ -160,7 +163,7 @@ public class UpsOperator {
    * This handles packages on an arrived truck
    */
   public void handleArrivedTruck(UAReadyForPickup ready) {
-     if (!ackedSeqnum.contains(ready.getSeqnum())) {
+    if (!ackedSeqnum.contains(ready.getSeqnum())) {
       ackedSeqnum.add(ready.getSeqnum());
       int truckId = ready.getTruckid();
       System.out.println("Truck " + truckId + " is arrived");
@@ -172,7 +175,10 @@ public class UpsOperator {
           switcher.requestLoadPackage(packageId, truckId);
         }
       }
-     }
+    }
+    AUCommand.Builder command = AUCommand.newBuilder();
+    command.addAcks(ready.getSeqnum());
+    sendAcksToUps(command);
   }
 
   /**
@@ -185,6 +191,9 @@ public class UpsOperator {
       new DatabaseOperator().updatePackageStatus(packageId, "delivered");
       System.out.println("Package " + packageId + " is delivered");
     }
+    AUCommand.Builder command = AUCommand.newBuilder();
+    command.addAcks(delivered.getSeqnum());
+    sendAcksToUps(command);
   }
 
   /**
@@ -199,7 +208,7 @@ public class UpsOperator {
         new DatabaseOperator().updateUpsAccount(packageId, upsAccount);
       }
       else {
-        new DatabaseOperator().updateUpsAccount(packageId, "invalid account");
+        new DatabaseOperator().updateUpsAccount(packageId, "Invalid Account");
       }
     }
   }
@@ -250,7 +259,7 @@ public class UpsOperator {
           new MessageOperator().sendMessage(message.build(), out);
         }
         catch (IOException e) {
-          System.out.println("Send message to world: " + e);
+          System.out.println("Send message to UPS: " + e);
         }
       }
     };
@@ -258,5 +267,19 @@ public class UpsOperator {
     ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 30, TimeUnit.SECONDS);
     runningService.put(seqnum, service);
     runningFuture.put(seqnum, future);
+  }
+
+  /**
+   * This sends acks to the UPS server
+   */
+  public void sendAcksToUps(AUCommand.Builder message) {
+    synchronized(out) {
+      try {
+        new MessageOperator().sendMessage(message.build(), out);
+      }
+      catch (IOException e) {
+        System.out.println("Send message to UPS: " + e);
+      }
+    }    
   }
 }
