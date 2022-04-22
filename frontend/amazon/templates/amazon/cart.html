@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <br>
-    <form action="{% url 'amazon-checkout' product.name %}" method="post">
+    <form action="{% url 'amazon-checkout' %}" method="post">
         {% csrf_token %}
         <div class="mb-3">
             <label for="product_num" class="form-label">Quantity</label>
