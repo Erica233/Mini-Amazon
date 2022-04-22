@@ -32,10 +32,11 @@ public class FrontendOperator {
         @Override()
         public void run() {
           try {
-            InputStreamReader inputReader = new InputStreamReader(frontendSocket.getInputStream());
-            BufferedReader reader = new BufferedReader(inputReader);
-            String res = reader.readLine();
-            int packageId = Integer.parseInt(res);
+            InputStream in = frontendSocket.getInputStream();
+            InputStreamReader inputReader = new InputStreamReader(in);
+            BufferedReader bufferReader = new BufferedReader(inputReader);
+            String buffer = bufferReader.readLine();
+            int packageId = Integer.parseInt(buffer);
             System.out.println("Receive package " + packageId + " from frontend");
             worldOperator.purchaseProduct(packageId);
           } 
