@@ -123,9 +123,11 @@ public class WorldOperator {
     List<AErr> errorList = message.getErrorList();
     for (AErr error : errorList) {
       System.out.println("Message from world: " + error.getErr());
+      ACommands.Builder command = ACommands.newBuilder();
+      command.addAcks(error.getSeqnum());
+      sendAcksToWorld(command);
     }
     
-    List<APackage> packagestatusList = message.getPackagestatusList();
     if (message.hasFinished()) {
       System.out.println("Disconnect to world!");
     }
@@ -138,6 +140,9 @@ public class WorldOperator {
         String status = packageStatus.getStatus();
         new DatabaseOperator().updatePackageStatus(packageId, status);
       }
+      ACommands.Builder command = ACommands.newBuilder();
+      command.addAcks(packageStatus.getSeqnum());
+      sendAcksToWorld(command);
     }
   }
 
@@ -195,6 +200,9 @@ public class WorldOperator {
         }
       }
     }
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addAcks(arrived.getSeqnum());
+    sendAcksToWorld(command);
   }
 
   /**
@@ -236,6 +244,9 @@ public class WorldOperator {
         loadPackage(packageId, truckId);
       }
     }
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addAcks(ready.getSeqnum());
+    sendAcksToWorld(command);
   }
 
   /**
@@ -276,6 +287,9 @@ public class WorldOperator {
         switcher.requestDelivery(truckId);
       }
     }
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addAcks(loaded.getSeqnum());
+    sendAcksToWorld(command);
   }
 
   /**
@@ -315,7 +329,6 @@ public class WorldOperator {
    * This sends commands to the world simulator
    */
   public void sendMessageToWorld(long seqnum, ACommands.Builder message) {
-    //message.setSimspeed(200);
     Runnable send = () -> {
       synchronized(out) {
         try {
@@ -330,5 +343,19 @@ public class WorldOperator {
     ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 30, TimeUnit.SECONDS);
     runningService.put(seqnum, service);
     runningFuture.put(seqnum, future);
+  }
+
+  /**
+   * This sends acks to the world simulator
+   */
+  public void sendAcksToWorld(ACommands.Builder message) {
+    synchronized(out) {
+      try {
+        new MessageOperator().sendMessage(message.build(), out);
+      }
+      catch (IOException e) {
+        System.out.println("Send message to world: " + e);
+      }
+    }    
   }
 }
