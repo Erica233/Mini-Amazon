@@ -1,0 +1,66 @@
+syntax = "proto2";
+import "world_amazon.proto";
+message UAConnect{
+  required int64 worldid = 1;
+  required int64 seqnum = 2;
+}
+
+message AUConnected{
+  required bool worldConnectionStatus = 1;
+  required int64 seqnum = 2;
+}
+
+message AUPack{
+	required APack package = 1;
+	optional string upsAccount = 2;
+	required int32 destx = 3;
+ 	required int32 desty = 4;
+}
+
+message AURequestPickup{
+  required AUPack pack = 1;
+  required int64 seqnum = 2;
+}
+
+message UAIsAssociated{
+	required int64 packageid = 1;
+	required bool checkResult = 2;
+}
+
+message UAReadyForPickup{
+  required int32 whnum = 1;
+  repeated int64 packageid = 2;
+  required int32 truckid = 3;
+  required int64 seqnum = 4;
+}
+
+message AUReadyForDelivery{
+  required int32 truckid = 1;
+  required int64 seqnum = 2;
+}
+
+message UAPackageDelivered{
+	required int64 packageid = 1;
+	required int64 seqnum = 2;
+}
+
+message Err{
+  required string errorInfo = 1;
+  required int64 originSeqnum = 2;
+  required int64 errorSeqnum = 3;	
+}
+
+message UACommand{
+  repeated UAReadyForPickup pickupReady = 1;
+  repeated UAPackageDelivered packageDelivered =2;
+  repeated UAIsAssociated linkResult =3;
+  repeated Err error = 4;
+  repeated int64 acks = 5;
+}
+
+message AUCommand{
+  repeated AURequestPickup pickupRequest = 1;
+  repeated AUReadyForDelivery deliveryReady = 2;
+  repeated Err error = 3;
+  repeated int64 acks = 4;
+}

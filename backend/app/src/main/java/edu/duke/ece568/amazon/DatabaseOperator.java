@@ -151,7 +151,6 @@ public class DatabaseOperator {
       connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      System.out.println("The status is: " + status);
       String sql = "UPDATE amazon_package SET status=\'" + status + "\' WHERE id=" + packageId + ";";
       stmt.executeUpdate(sql); 
       connection.commit();

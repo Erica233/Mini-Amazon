@@ -69,18 +69,18 @@ public class UpsOperator {
     try {
       UACommand.Builder response = UACommand.newBuilder();
       new MessageOperator().receiveMessage(response, in);
-      //Thread th = new Thread() {
-        //@Override()
-        //public void run() {
+      Thread th = new Thread() {
+        @Override()
+        public void run() {
           try {
             parseUpsMessage(response.build());
           }
           catch (IOException e) {
             System.out.println("Message from UPS: " + e);
           }
-        //}
-      //};
-      //th.start();
+        }
+      };
+      th.start();
     }
     catch (IOException e) {
       //System.out.println("Message from UPS: " + e);
@@ -211,6 +211,7 @@ public class UpsOperator {
         new DatabaseOperator().updateUpsAccount(packageId, "Invalid Account");
       }
     }
+    System.out.println("UPS account of package " + packageId + " is checked");
   }
 
   /**
@@ -264,7 +265,7 @@ public class UpsOperator {
       }
     };
     ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 30, TimeUnit.SECONDS);
+    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 20, TimeUnit.SECONDS);
     runningService.put(seqnum, service);
     runningFuture.put(seqnum, future);
   }

@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 public class WorldOperator {
 
-  private final String worldHost = "vcm-25935.vm.duke.edu";
+  private final String worldHost = "vcm-24690.vm.duke.edu";
   private final int worldPort = 23456;
   private Socket worldSocket;
   private InputStream in;
@@ -77,18 +77,18 @@ public class WorldOperator {
     try {
       AResponses.Builder response = AResponses.newBuilder();
       new MessageOperator().receiveMessage(response, in);
-      //Thread th = new Thread() {
-       //@Override()
-        //public void run() {
+      Thread th = new Thread() {
+       @Override()
+        public void run() {
           try {
             parseWorldMessage(response.build());
           }
           catch (IOException e) {
             System.out.println("Message from world: " + e);
           }
-        //}
-      //};
-      //th.start();
+        }
+      };
+      th.start();
     }
     catch (IOException e) {
       //System.out.println("Message from world: " + e);
@@ -159,7 +159,6 @@ public class WorldOperator {
         purchasingProduct.put(packageId, purchase.build());
         ACommands.Builder command = ACommands.newBuilder();
         command.addBuy(purchase.build());
-        System.out.println("Ready to send product purchase request");
         sendMessageToWorld(seqnum, command);
         System.out.println("Purchasing package " + packageId);
       }
@@ -340,7 +339,7 @@ public class WorldOperator {
       }
     };
     ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 30, TimeUnit.SECONDS);
+    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 20, TimeUnit.SECONDS);
     runningService.put(seqnum, service);
     runningFuture.put(seqnum, future);
   }
