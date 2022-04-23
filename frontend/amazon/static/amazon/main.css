@@ -92,11 +92,11 @@ table {
     table-layout: fixed;
 }
 table td {
-    align: center;
+    align: left;
     text-align: center;
 }
 table td input {
-    align: center;
+    align: left;
     position: absolute;
     width: 100%;
     box-sizing: border-box;
