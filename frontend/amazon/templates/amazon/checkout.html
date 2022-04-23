@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <br>
-    <form action="{% url 'amazon-one-order' package.id %}" method="post">
+    <form action="{% url 'amazon-checkout' %}" method="post">
         {% csrf_token %}
         <div class="row">
             <label for="destination_x" class="form-label">Address</label>
