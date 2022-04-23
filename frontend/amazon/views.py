@@ -72,11 +72,26 @@ def oneProduct(request, a_product):
 def cart(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
     if request.method == "POST" and 'remove' in request.POST:
-            item_id = request.POST['remove']
-            item = Item.objects.get(id=item_id)
+        item_id = request.POST['remove']
+        item = Item.objects.get(id=item_id)
+        item.delete()
+        messages.add_message(request, messages.INFO, 'Removed ' + item.product.name + ' From Your Cart Successfully!')
+        return HttpResponseRedirect(reverse('amazon-cart'))
+    elif request.method == "POST" and '+' in request.POST:
+        item_id = request.POST['+']
+        item = Item.objects.get(id=item_id)
+        item.product_num += 1
+        item.save()
+        return HttpResponseRedirect(reverse('amazon-cart'))
+    elif request.method == "POST" and '-' in request.POST:
+        item_id = request.POST['-']
+        item = Item.objects.get(id=item_id)
+        if item.product_num == 1:
             item.delete()
-            messages.add_message(request, messages.INFO, 'Removed ' + item.product.name + ' From Your Cart Successfully!')
-            return HttpResponseRedirect(reverse('amazon-cart'))
+        else:
+            item.product_num -= 1
+            item.save()
+        return HttpResponseRedirect(reverse('amazon-cart'))
     else:
         total_price = 0
         for item in items:
