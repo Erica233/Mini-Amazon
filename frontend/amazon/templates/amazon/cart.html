@@ -70,15 +70,19 @@
                             </form>
                         </span>
                     </td>
-                    <td>{{ item.item_price }}</td>
                     <td>
-                        <form action="{% url 'amazon-cart' %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" value="*" class="button">
-                                <i class="bi bi-x-circle"></i>
-                            </button>
-                            <input type="hidden" name="remove" value="{{ item.id }}" style="visibility: hidden;">
-                        </form>
+                        <span style="float:left;">
+                            {{ item.item_price }}
+                        </span>
+                        <span style="float:left;">
+                            <form action="{% url 'amazon-cart' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" value="*" class="button">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                                <input type="hidden" name="remove" value="{{ item.id }}" style="visibility: hidden;">
+                            </form>
+                        </span>
                     </td>
                 </tr>
             {% endfor %}
