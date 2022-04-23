@@ -27,13 +27,9 @@
             <p class="article-content">$ {{ product.price }}</p>
             <form action="{% url 'amazon-one-product' product.name %}" method="post">
                 {% csrf_token %}
-                <div class="col-md-2">
-                    <span style="float:left;">
-                        <label for="product_num" class="form-label">Quantity</label>
-                    </span>
-                    <span style="float:left;">
-                        <input type="number" min='1' class="form-control" id="product_num" name="product_num" value="1" required>
-                    </span>
+                <div class="row mb-3">
+                    <label for="product_num" class="form-label">Quantity</label>
+                    <input type="number" min='1' class="form-control" id="product_num" name="product_num" value="1" required>
                 </div>
                 <br>
                 <button type="submit" class="btn btn-primary">Add to Shopping Cart</button>
