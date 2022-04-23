@@ -5,6 +5,7 @@
         <h2>Welcome, {{user.username}}!</h2>
         <br>
         <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
+        <a href="{% url 'amazon-cart' %}" class="btn btn-primary">MyCart</a>
     {% else %}
         <h2>Welcome, visitor!</h2>
         <br>
