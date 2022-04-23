@@ -28,9 +28,14 @@
                     <th>{{ item.product.name }}</th>
                     <td>${{ item.product.price }}</td>
                     <td>{{ item.product_num }}</td>
-                    <td>{{ item.item_price }}</td>
+                    <td>${{ item.item_price }}</td>
                 </tr>
             {% endfor %}
+            <tr>
+                <td colspan="3"><b>Total Price: </b></td>
+                <td><b>${{ total_price }}</b></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
     <p class="text-end">Total Price:  ${{ package.package_price }}</p>
