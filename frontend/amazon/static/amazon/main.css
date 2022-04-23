@@ -86,3 +86,20 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+table {
+    width: 550px;
+    border-collapse:collapse;
+    margin: auto;
+    background-color: #A4A4A4;
+    border: 2px solid black;
+    table-layout: fixed;
+}
+td {
+    text-align: center;
+    border: 2px solid green;
+}
+td input {
+    width: 100%;
+    box-sizing: border-box;
+}
