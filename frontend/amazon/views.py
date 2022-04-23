@@ -104,19 +104,21 @@ def checkout(request):
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)
+        item_list = "" # used for email content
         for item in items:
             package_price += item.product_num * item.product.price
             item.in_cart = False
             item.package = package
             item.save()
+            item_list += (item.product.name + " * " + item.product_num + "\n")
         package.package_price = package_price
         package.save()
         # send email to the user to notify the success of making this order
         subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
         msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
               ' and are dealing with it! Please be patient!\n\nOrder No.' + str(package.id) + ':\nCreated Time: ' + \
-              str(package.create_time) + '\n\nItem list:\n' + product.name + ' * ' + product_num + '\nTotal price: $' \
-              + str(package_price) + '\n\nThanks,\nMini-Amazon Group'
+              str(package.create_time) + '\n\nItem list:\n' + item_list + '\nTotal price: $' + str(package_price) + \
+              '\n\nThanks,\nMini-Amazon Group\n'
         send_mail(
             subject,
             msg,
