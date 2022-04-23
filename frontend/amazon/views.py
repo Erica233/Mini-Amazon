@@ -111,7 +111,9 @@ def cart(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
     if request.method == "POST" and 'remove' in request.POST:
             item_id = request.POST['remove']
-            Item.objects.get(id=item_id).delete()
+            item = Item.objects.get(id=item_id)
+            item.delete()
+            messages.add_message(request, messages.INFO, 'Removed ' + item.product.name + ' From Your Cart Successfully!')
             return HttpResponseRedirect(reverse('amazon-cart'))
     else:
         context = {
@@ -173,6 +175,8 @@ def checkout(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
     if request.method == "POST":
         package_price = 0
+        for item in items:
+            package_price += item.product_num * item.product.price
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
         ups_account = request.POST.get('ups_account', '')
@@ -189,14 +193,6 @@ def checkout(request):
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)
-        nums = request.POST.getlist('product_num')
-        for i in range(len(nums)):
-            items[i].product_num = nums[i]
-            items[i].package = package
-            items[i].save()
-            package_price += nums[i] * items[i].product.name
-        package.package_price = package_price
-        package.save()
         '''
         # send email to the user to notify the success of making this order
         subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
