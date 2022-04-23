@@ -91,10 +91,11 @@ table {
     border-collapse:collapse;
     table-layout: fixed;
 }
-td {
+table td {
     text-align: center;
 }
-td input {
+table td input {
+    position: absolute;
     width: 100%;
     box-sizing: border-box;
 }
