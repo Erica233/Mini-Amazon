@@ -58,7 +58,9 @@
                         <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" value="+" class="btn btn-primary btn-xs">+</button>
+                                <button type="submit" value="+" class="btn btn-primary btn-xs">
+                                    <i class="bi bi-plus-circle-fill"></i>
+                                </button>
                                 <input type="hidden" name="+" value="{{ item.id }}" style="visibility: hidden;">
                             </form>
                         </span>
