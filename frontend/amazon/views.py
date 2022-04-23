@@ -198,7 +198,6 @@ def checkout(request):
             item.save()
         package.package_price = package_price
         package.save()
-        '''
         # send email to the user to notify the success of making this order
         subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
         msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
@@ -212,7 +211,6 @@ def checkout(request):
             [request.user.email],
             fail_silently=False,
         )
-        '''
         messages.add_message(request, messages.INFO, 'Your Order is Placed Successfully!')
         return HttpResponseRedirect(reverse('amazon-home'))
     else:
