@@ -71,10 +71,10 @@
                         </span>
                     </td>
                     <td>
-                        <span style="float:left;">
+                        <span style="float:center;">
                             ${{ item.item_price }}&ensp;
                         </span>
-                        <span style="float:center;">
+                        <span style="float:right;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="*" class="button">
