@@ -30,7 +30,7 @@
                         <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" value="-" class="btn btn-link">-</button>
+                                <button type="submit" value="-" class="btn btn-default">-</button>
                                 <input type="hidden" name="-" value="{{ item.id }}" style="visibility: hidden;">
                             </form>
                         </span>
@@ -40,7 +40,7 @@
                         <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
-                                <input type="submit" value="+" class="btn btn-link">
+                                <button type="submit" value="+" class="btn btn-default">
                                 <input type="hidden" name="+" value="{{ item.id }}" style="visibility: hidden;">
                             </form>
                         </span>
