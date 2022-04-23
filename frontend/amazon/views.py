@@ -113,7 +113,7 @@ def checkout(request):
             item.in_cart = False
             item.package = package
             item.save()
-            item_list += (item.product.name + " * " + item.product_num + "\n")
+            item_list += (item.product.name + " * " + str(item.product_num) + "\n")
         package.package_price = package_price
         package.save()
         # send email to the user to notify the success of making this order
