@@ -11,14 +11,14 @@
     <span style="font-size: 23px;">Order Detatil #{{ package.id }}</span>
     {% if package.status == 'delivered' %}
         <div class="badge bg-success text-wrap" style="width: 9rem;">
-            Status:  {{ package.status }}
+            &nbsp;Status:  {{ package.status }}
         </div>
     {% else %}
         <div class="badge bg-primary text-wrap" style="width: 9rem;">
             Status:  {{ package.status }}
         </div>
     {% endif %}
-    <h5 style="font-size: 15px;"> - Confirmed At {{ package.create_time }}</h5>
+    <h5 style="font-size: 15px;">Confirmed At {{ package.create_time }}</h5>
     <table class="table">
         <thead>
             <tr>
