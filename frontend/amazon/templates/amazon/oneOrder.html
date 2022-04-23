@@ -33,12 +33,11 @@
             {% endfor %}
             <tr>
                 <td colspan="3"><b>Total Price: </b></td>
-                <td><b>${{ total_price }}</b></td>
+                <td><b>${{ package.package_price }}</b></td>
                 <td></td>
             </tr>
         </tbody>
     </table>
-    <p class="text-end">Total Price:  ${{ package.package_price }}</p>
     <fieldset>
         <legend>Logistics Information:</legend>
         <p>Destination:  X: {{ package.destination_x }}, Y: {{ package.destination_y }}</p>
