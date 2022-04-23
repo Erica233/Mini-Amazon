@@ -37,6 +37,7 @@
             </tbody>
         </table>
         <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop More</a>
+        <br>
         {% if items %}
             <br>
             <h4>Logistic Information</h4>
@@ -52,7 +53,7 @@
                 <label for="ups_account" class="form-label">UPS Account (optional)</label>
                 <input type="text" class="form-control" id="ups_account" name="ups_account">
             </div>
-            <button type="submit" class="btn btn-primary">Buy Now</button>
+            <button type="submit" class="btn btn-primary">Place Order Now</button>
         {% else %}
             No Items In Your Cart Now
             <br>
