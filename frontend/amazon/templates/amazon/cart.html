@@ -21,7 +21,9 @@
             {% for item in items %}
                 <tr>
                     <th>
-                        <a href="{% url 'amazon-one-product' item.product.name %}" class="text-decoration-none">{{ item.product.name }}</a>
+                        <a href="{% url 'amazon-one-product' item.product.name %}" class="text-decoration-none">
+                            {{ item.product.name }}
+                        </a>
                     </th>
                     <td>{{ item.product.price }}</td>
                     <td>{{ item.product_num }}</td>
