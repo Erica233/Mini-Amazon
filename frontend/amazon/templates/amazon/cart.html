@@ -43,6 +43,9 @@
                     <td>{{ item.product.price }}</td>
                     <td>
                         <span style="float:left;">
+                            <i class="bi bi-plus-circle-fill"></i>
+                        </span>
+                        <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="-" class="button">-</button>
