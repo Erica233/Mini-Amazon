@@ -51,10 +51,6 @@ def oneProduct(request, a_product):
     curr_cat = product.category.category
 
     if request.method == "POST":
-        if 'remove' in request.POST:
-            item_id = request.POST['remove']
-            Item.objects.get(id=item_id).delete()
-            return HttpResponseRedirect('amazon-cart')
         product_num = request.POST['product_num']
         if Item.objects.filter(buyer=request.user, product=product, in_cart=True).exists():
             item = Item.objects.get(buyer=request.user, product=product, in_cart=True)
@@ -114,6 +110,10 @@ def oneProduct(request, a_product):
 def cart(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
     if request.method == "POST":
+        if 'remove' in request.POST:
+            item_id = request.POST['remove']
+            Item.objects.get(id=item_id).delete()
+            return HttpResponseRedirect('amazon-cart')
         package_price = 0
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
