@@ -54,7 +54,7 @@ def oneProduct(request, a_product):
         product_num = request.POST['product_num']
         if Item.objects.filter(buyer=request.user, product=product, in_cart=True).exists():
             item = Item.objects.get(buyer=request.user, product=product, in_cart=True)
-            item.product_num += product_num
+            item.product_num += int(product_num)
             item.save()
         else:
             Item.objects.create(buyer=request.user, product=product, product_num=product_num)
