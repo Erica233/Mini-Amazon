@@ -67,44 +67,6 @@ def oneProduct(request, a_product):
             'curr_nav': curr_cat
         }
         return render(request, 'amazon/product.html', context)
-        '''destination_x = request.POST['destination_x']
-        destination_y = request.POST['destination_y']
-        ups_account = request.POST.get('ups_account', '')
-        ups_verified = False
-        # allocate the nearest warehouse location
-        warehouses = Warehouse.objects.all()
-        min_dist = 10000
-        warehouse = Warehouse.objects.get(id=1)
-        for wh in warehouses.iterator():
-            dist = abs(wh.location_x - int(destination_x)) ** 2 + abs(wh.location_y - int(destination_y)) ** 2
-            if min_dist > dist:
-                min_dist = dist
-                warehouse = wh
-        package_price = product.price * int(product_num)
-        package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
-                                         destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
-                                         package_price=package_price)
-        item = Item.objects.create(buyer=request.user, product=product, product_num=product_num, package=package)
-        # send email to the user to notify the success of making this order
-        subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
-        msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
-              ' and are dealing with it! Please be patient!\n\nOrder No.' + str(package.id) + ':\nCreated Time: ' + \
-              str(package.create_time) + '\n\nItem list:\n' + product.name + ' * ' + product_num + '\nTotal price: $' \
-              + str(package_price) + '\n\nThanks,\nMini-Amazon Group'
-        send_mail(
-            subject,
-            msg,
-            'gaozedong1111@gmail.com',
-            [request.user.email],
-            fail_silently=False,
-        )
-        # send package_id to backend through TCP socket
-        #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #s.connect(("www.python.org", 5678))
-        #s.close()
-        messages.add_message(request, messages.INFO, 'Order Created Successfully!')
-        return HttpResponseRedirect(reverse('amazon-products'))
-        '''
 
 @login_required
 def cart(request):
@@ -120,55 +82,6 @@ def cart(request):
             'items': items,
         }
         return render(request, 'amazon/cart.html', context)
-        '''
-        package_price = 0
-        destination_x = request.POST['destination_x']
-        destination_y = request.POST['destination_y']
-        ups_account = request.POST.get('ups_account', '')
-        ups_verified = False
-        # allocate the nearest warehouse location
-        warehouses = Warehouse.objects.all()
-        min_dist = 10000
-        warehouse = Warehouse.objects.get(id=1)
-        for wh in warehouses.iterator():
-            dist = abs(wh.location_x - int(destination_x)) ** 2 + abs(wh.location_y - int(destination_y)) ** 2
-            if min_dist > dist:
-                min_dist = dist
-                warehouse = wh
-        package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
-                                         destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
-                                         package_price=package_price)
-        nums = request.POST.getlist('product_num')
-        for i in range(len(nums)):
-            items[i].product_num = nums[i]
-            items[i].package = package
-            items[i].save()
-            package_price += nums[i] * items[i].product.name
-        package.package_price = package_price
-        package.save()
-        
-        # send email to the user to notify the success of making this order
-        subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
-        msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
-              ' and are dealing with it! Please be patient!\n\nOrder No.' + str(package.id) + ':\nCreated Time: ' + \
-              str(package.create_time) + '\n\nItem list:\n' + product.name + ' * ' + product_num + '\nTotal price: $' \
-              + str(package_price) + '\n\nThanks,\nMini-Amazon Group'
-        send_mail(
-            subject,
-            msg,
-            'gaozedong1111@gmail.com',
-            [request.user.email],
-            fail_silently=False,
-        )
-        
-        messages.add_message(request, messages.INFO, 'Your Order is Placed Successfully!')
-        return HttpResponseRedirect(reverse('amazon-home'))
-    else:
-        context = {
-            'items': items,
-        }
-        return render(request, 'amazon/cart.html', context)
-        '''
 
 @login_required
 def checkout(request):
