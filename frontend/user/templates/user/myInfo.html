@@ -1,5 +1,13 @@
 {% extends "amazon/base.html" %}
 {% load crispy_forms_tags %}
+{% block cats %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-cart' %}">My Information</a>
+        </li>
+    </ul>
+{% endblock %}
 {% block content %}
-    <h1>{{ user.username }}</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
 {% endblock content %}
