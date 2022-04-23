@@ -70,7 +70,7 @@ def oneProduct(request, a_product):
 
 @login_required
 def cart(request):
-    items = Item.objects.filter(buyer=request.user, in_cart=True)
+    items = Item.objects.filter(buyer=request.user, in_cart=True).order_by('id')
     if request.method == "POST" and 'remove' in request.POST:
         item_id = request.POST['remove']
         item = Item.objects.get(id=item_id)
