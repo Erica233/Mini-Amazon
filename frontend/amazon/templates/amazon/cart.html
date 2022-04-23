@@ -28,6 +28,7 @@
                     <td>
                     <td>
                         <form action="{% url 'amazon-cart' %}" method="post">
+                            {% csrf_token %}
                             <input type="submit" value="{{ item.id }}" name="remove">
                         </form>
                     </td>
