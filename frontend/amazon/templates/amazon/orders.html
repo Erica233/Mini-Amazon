@@ -34,4 +34,11 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if packages %}
+    {% else %}
+            No Orders In Your Order History
+            <br>
+            <br>
+            <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
+    {% endif %}
 {% endblock content %}
