@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 
 from .models import Item, Product, Category, Package, Warehouse
 
@@ -20,7 +21,9 @@ def allProducts(request):
         products = Product.objects.filter(name__icontains=search_products)
     else:
         products = Product.objects.all()
+
     context = {
+        'count': products.count(),
         'categories': Category.objects.all().order_by('-category'),
         'products': products,
         'curr_nav': 'all'
@@ -35,6 +38,7 @@ def categories(request, a_category):
         return HttpResponseRedirect(reverse('amazon-products'))
     products = Product.objects.filter(category_id=cat.id)
     context = {
+        'count': products.count(),
         'categories': Category.objects.all().order_by('-category'),
         'products': products,
         'curr_nav': a_category
