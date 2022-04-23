@@ -27,7 +27,8 @@
                 <th scope="col">Items</th>
                 <th scope="col">Price</th>
                 <th scope="col">Quantity</th>
-                <th scope="col">Operation</th>
+                <th scope="col">Item Price</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -43,7 +44,7 @@
                         {% if item.product_num == 1 %}
                             <span style="float:left;">
                                 <button type="submit" value="-" class="button">
-                                    <i class="bi bi-dash-circle"></i>
+                                    <i class="bi bi-dash-circle-dotted"></i>
                                 </button>
                             </span>
                         {% else %}
@@ -51,7 +52,7 @@
                                 <form action="{% url 'amazon-cart' %}" method="post">
                                     {% csrf_token %}
                                     <button type="submit" value="-" class="button">
-                                        <i class="bi bi-dash-circle-fill"></i>
+                                        <i class="bi bi-dash-circle"></i>
                                     </button>
                                     <input type="hidden" name="-" value="{{ item.id }}" style="visibility: hidden;">
                                 </form>
@@ -64,16 +65,19 @@
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="+" class="button">
-                                    <i class="bi bi-plus-circle-fill"></i>
+                                    <i class="bi bi-plus-circle"></i>
                                 </button>
                                 <input type="hidden" name="+" value="{{ item.id }}" style="visibility: hidden;">
                             </form>
                         </span>
                     </td>
+                    <td>{{ item.item_price }}</td>
                     <td>
                         <form action="{% url 'amazon-cart' %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" value="remove" class="btn btn-link">remove</button>
+                            <button type="submit" value="*" class="button">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
                             <input type="hidden" name="remove" value="{{ item.id }}" style="visibility: hidden;">
                         </form>
                     </td>
