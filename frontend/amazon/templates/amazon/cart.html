@@ -43,7 +43,7 @@
     <br>
     {% if items %}
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+            <a href="{% url 'amazon-checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
         </div>
     {% else %}
         No Items In Your Cart Now

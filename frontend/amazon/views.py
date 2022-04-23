@@ -109,11 +109,16 @@ def oneProduct(request, a_product):
 @login_required
 def cart(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
-    if request.method == "POST":
-        if 'remove' in request.POST:
+    if request.method == "POST" and 'remove' in request.POST:
             item_id = request.POST['remove']
             Item.objects.get(id=item_id).delete()
             return HttpResponseRedirect(reverse('amazon-cart'))
+    else:
+        context = {
+            'items': items,
+        }
+        return render(request, 'amazon/cart.html', context)
+        '''
         package_price = 0
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
@@ -139,7 +144,7 @@ def cart(request):
             package_price += nums[i] * items[i].product.name
         package.package_price = package_price
         package.save()
-        '''
+        
         # send email to the user to notify the success of making this order
         subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
         msg = 'Dear ' + request.user.username + ', \nThanks for shopping at Mini-Amazon!\nWe have received your order' \
@@ -153,7 +158,7 @@ def cart(request):
             [request.user.email],
             fail_silently=False,
         )
-        '''
+        
         messages.add_message(request, messages.INFO, 'Your Order is Placed Successfully!')
         return HttpResponseRedirect(reverse('amazon-home'))
     else:
@@ -161,6 +166,7 @@ def cart(request):
             'items': items,
         }
         return render(request, 'amazon/cart.html', context)
+        '''
 
 @login_required
 def checkout(request):
