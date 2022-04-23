@@ -95,11 +95,11 @@
     </table>
     {% if items %}
         <div class="col-12">
-            <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop More</a>
+            <a href="{% url 'amazon-checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
         </div>
         <br>
         <div class="col-12">
-            <a href="{% url 'amazon-checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+            <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop More</a>
         </div>
     {% else %}
         No Items In Your Cart Now
