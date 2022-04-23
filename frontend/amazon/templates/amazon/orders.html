@@ -30,7 +30,7 @@
                     <td>{{ package.package_price }}</td>
                     <td>
                         <div class="badge bg-primary text-wrap" style="width: 9rem;">
-                            Status:  {{ package.status }}
+                            {{ package.status }}
                         </div>
                     </td>
                     <td><a href="{% url 'amazon-one-order' package.id %}">view</a></td>
