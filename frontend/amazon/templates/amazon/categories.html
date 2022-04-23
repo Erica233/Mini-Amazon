@@ -30,7 +30,9 @@
         <article class="media content-section">
             <div class="media-body">
                 <h3><a class="article-title" href="{% url 'amazon-one-product' product.name %}">{{ product.name }}</a></h3>
+                <p class="article-content"> {{ product.description }}</p>
                 <p class="article-content">$ {{ product.price }}</p>
+                <img src="{{ product.pic }}" alt="" height="100" width="100">
             </div>
         </article>
     {% endfor %}
