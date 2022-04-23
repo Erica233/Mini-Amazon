@@ -78,12 +78,12 @@ def cart(request):
             messages.add_message(request, messages.INFO, 'Removed ' + item.product.name + ' From Your Cart Successfully!')
             return HttpResponseRedirect(reverse('amazon-cart'))
     else:
-        overal_price = 0
+        total_price = 0
         for item in items:
-            overal_price += item.product_num * item.product.price
+            total_price += item.product_num * item.product.price
         context = {
             'items': items,
-            'overal_price': overal_price
+            'total_price': total_price
         }
         return render(request, 'amazon/cart.html', context)
 
