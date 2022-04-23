@@ -27,17 +27,17 @@
                     </th>
                     <td>{{ item.product.price }}</td>
                     <td>
-                        <span>
+                        <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <input type="submit" value="-" class="btn btn-link">
                                 <input type="hidden" name="-" value="{{ item.id }}" style="visibility: hidden;">
                             </form>
                         </span>
-                        <span>
+                        <span style="float:left;">
                             {{ item.product_num }}
                         </span>
-                        <span>
+                        <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <input type="submit" value="+" class="btn btn-link">
