@@ -49,6 +49,8 @@
             </div>
             <button type="submit" class="btn btn-primary">Buy Now</button>
         {% else %}
+            <br>
+            No Items In Your Cart Now
             <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
         {% endif %}
     </form>
