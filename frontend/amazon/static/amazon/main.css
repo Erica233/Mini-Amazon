@@ -86,18 +86,3 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
-
-table {
-    border-collapse:collapse;
-    table-layout: fixed;
-}
-table td {
-    align: left;
-    text-align: center;
-}
-table td input {
-    align: left;
-    position: absolute;
-    width: 100%;
-    box-sizing: border-box;
-}
