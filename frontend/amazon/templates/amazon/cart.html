@@ -23,9 +23,7 @@
                 <tr>
                     <th>{{ item.product.name }}</th>
                     <td>{{ item.product.price }}</td>
-                    <td>
-                        {{ item.product_num }}
-                    <td>
+                    <td>{{ item.product_num }}</td>
                     <td>
                         <form action="{% url 'amazon-cart' %}" method="post">
                             {% csrf_token %}
