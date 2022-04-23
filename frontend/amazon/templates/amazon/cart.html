@@ -50,7 +50,7 @@
             <button type="submit" class="btn btn-primary">Buy Now</button>
         {% else %}
             <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
-        {% endfor %}
+        {% endif %}
     </form>
     <br>
 {% endblock content %}
