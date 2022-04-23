@@ -214,7 +214,7 @@ def checkout(request):
         context = {
             'items': items,
         }
-        return render(request, 'amazon/cart.html', context)
+        return render(request, 'amazon/checkout.html', context)
 
 @login_required
 def orders(request):
