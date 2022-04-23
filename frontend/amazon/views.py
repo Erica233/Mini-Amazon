@@ -87,7 +87,7 @@ def cart(request):
 def checkout(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
     if not items:
-        messages.add_message(request, messages.ERROR, 'No Items in Your Cart! Shopping First')
+        messages.add_message(request, messages.ERROR, 'No Items in Your Cart! Shopping First!')
         return HttpResponseRedirect(reverse('amazon-products'))
     if request.method == "POST":
         package_price = 0
