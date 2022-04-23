@@ -38,7 +38,7 @@
                             {{ item.product.name }}
                         </a>
                     </th>
-                    <td style="float:left;text-align: left;">{{ item.product.price }}</td>
+                    <td style="float:right;text-align: right;">{{ item.product.price }}</td>
                     <td>
                         {% if item.product_num == 1 %}
                             <span style="float:left;">
@@ -74,7 +74,7 @@
                         <span style="float:left;">
                             {{ item.item_price }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
-                        <span style="float:right;">
+                        <span style="float:center;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="*" class="button">
