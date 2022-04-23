@@ -41,13 +41,13 @@
                     <td>${{ item.product.price }}</td>
                     <td>
                         {% if item.product_num == 1 %}
-                            <span style="float:center;">
+                            <span style="float:Changes;">
                                 <button type="submit" value="-" class="button">
                                     <i class="bi bi-dash-circle-dotted"></i>
                                 </button>
                             </span>
                         {% else %}
-                            <span style="float:center;">
+                            <span style="float:Changes;">
                                 <form action="{% url 'amazon-cart' %}" method="post">
                                     {% csrf_token %}
                                     <button type="submit" value="-" class="button">
