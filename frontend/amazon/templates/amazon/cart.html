@@ -60,7 +60,7 @@
                         <span style="float:center;">
                             {{ item.product_num }}
                         </span>
-                        <span style="float:right;">
+                        <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="+" class="button">
