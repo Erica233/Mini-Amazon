@@ -16,6 +16,7 @@
                     <th scope="col">Items</th>
                     <th scope="col">Price</th>
                     <th scope="col">Quantity</th>
+                    <th scope="col">Operation</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,9 +26,12 @@
                         <td>{{ item.product.price }}</td>
                         <td>
                             <div class="col-md-4">
-                                <input type="number" class="form-control" id="product_num" name="product_num" value="{{ item.product_num }}" required>
+                                <input type="number" class="form-control" id="product_num" name="product_num" value="{{ item.product_num }}" min=1 required>
                             </div>
                         <td>
+                        <td>
+                            <a href="#" class="btn btn-primary">remove</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
