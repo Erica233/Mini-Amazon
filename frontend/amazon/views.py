@@ -175,8 +175,6 @@ def checkout(request):
     items = Item.objects.filter(buyer=request.user, in_cart=True)
     if request.method == "POST":
         package_price = 0
-        for item in items:
-            package_price += item.product_num * item.product.price
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
         ups_account = request.POST.get('ups_account', '')
@@ -193,6 +191,11 @@ def checkout(request):
         package = Package.objects.create(owner=request.user, warehouse=warehouse, destination_x=destination_x,
                                          destination_y=destination_y, ups_account=ups_account, ups_verified=ups_verified,
                                          package_price=package_price)
+        for item in items:
+            package_price += item.product_num * item.product.price
+            item.in_cart = False
+            item.package = package
+            item.save()
         '''
         # send email to the user to notify the success of making this order
         subject = 'Your order #' + str(package.id) + ' is confirmed - Mini-Amazon'
