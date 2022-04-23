@@ -11,21 +11,12 @@
     <form action="{% url 'amazon-products' %}" method="post">
         {% csrf_token %}
         <div class="row">
-            <div class="col-md-6">
-                <label for="destination_x" class="form-label">Address</label>
+            <label for="destination_x" class="form-label">Address</label>
+            <div class="col">
                 <input type="number" class="form-control" id="destination_x" name="destination_x" placeholder="Destination X" required>
             </div>
-            <div class="col-md-6">
-                <label for="destination_y" class="form-label"></label>
+            <div class="col">
                 <input type="number" class="form-control" id="destination_y" name="destination_y" placeholder="Destination Y" required>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <input type="text" class="form-control" placeholder="First name" aria-label="First name">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Last name" aria-label="Last name">
             </div>
         </div>
         <div class="mb-3">
