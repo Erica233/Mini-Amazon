@@ -25,7 +25,11 @@
         <tbody>
             {% for item in items %}
                 <tr>
-                    <th>{{ item.product.name }}</th>
+                    <th>
+                        <a href="{% url 'amazon-one-product' item.product.name %}" class="text-decoration-none">
+                            {{ item.product.name }}
+                        </a>
+                    </th>
                     <td>${{ item.product.price }}</td>
                     <td>{{ item.product_num }}</td>
                     <td>${{ item.item_price }}</td>
