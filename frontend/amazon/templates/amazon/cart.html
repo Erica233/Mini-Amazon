@@ -74,7 +74,7 @@
                         <span style="float:left;">
                             {{ item.item_price }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
-                        <span style="float:left;">
+                        <span style="float:right;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="*" class="button">
