@@ -149,7 +149,7 @@ def checkout(request):
             fail_silently=False,
         )
         messages.add_message(request, messages.INFO, 'Your Order is Placed Successfully!')
-        return HttpResponseRedirect(reverse('amazon-one-order') + str(package.id))
+        return HttpResponseRedirect('amazon-one-order', package_id=package.id)
     else:
         context = {
             'items': items,
