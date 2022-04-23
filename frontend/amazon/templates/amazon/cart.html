@@ -83,11 +83,14 @@
                     </td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan="3"><b>Total Price: </b></td>
-                <td><b>${{ total_price }}</b></td>
-                <td></td>
-            </tr>
+            {% if items %}
+                <tr>
+                    <td colspan="3"><b>Total Price: </b></td>
+                    <td><b>${{ total_price }}</b></td>
+                    <td></td>
+                </tr>
+            {% else %}
+            {% endif %}
         </tbody>
     </table>
     {% if items %}
