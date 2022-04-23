@@ -25,7 +25,7 @@
         <div class="media-body">
             <h3><a class="article-title" href="{% url 'amazon-one-product' product.name %}">{{ product.name }}</a></h3>
             <p class="article-content">$ {{ product.price }}</p>
-            <form action="{% url 'amazon-one-product' product.name %}" method="post">
+            <form class="form-horizontal" action="{% url 'amazon-one-product' product.name %}" method="post">
                 {% csrf_token %}
                 <div class="row g-3">
                     <label for="product_num" class="col-sm-2 col-form-label">Quantity</label>
