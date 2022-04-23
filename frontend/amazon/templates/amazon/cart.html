@@ -27,7 +27,7 @@
                 <th scope="col">Items</th>
                 <th scope="col">Price</th>
                 <th scope="col" style="float:left;">Quantity</th>
-                <th scope="col">Item Price</th>
+                <th scope="col" style="float:left;">Item Price</th>
             </tr>
         </thead>
         <tbody>
@@ -71,10 +71,10 @@
                         </span>
                     </td>
                     <td>
-                        <span style="float:center;">
+                        <span style="float:left;">
                             ${{ item.item_price }}&ensp;
                         </span>
-                        <span style="float:right;">
+                        <span style="float:center;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="*" class="button">
