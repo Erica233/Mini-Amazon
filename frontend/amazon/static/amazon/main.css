@@ -96,6 +96,7 @@ table td {
     text-align: center;
 }
 table td input {
+    align: center
     position: absolute;
     width: 100%;
     box-sizing: border-box;
