@@ -87,11 +87,11 @@ def cart(request):
         item_id = request.POST['-']
         item = Item.objects.get(id=item_id)
         if item.product_num == 1:
-            item.delete()
+            return HttpResponseRedirect(reverse('amazon-cart'))
         else:
             item.product_num -= 1
             item.save()
-        return HttpResponseRedirect(reverse('amazon-cart'))
+            return HttpResponseRedirect(reverse('amazon-cart'))
     else:
         total_price = 0
         for item in items:
