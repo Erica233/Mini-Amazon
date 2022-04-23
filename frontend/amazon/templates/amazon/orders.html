@@ -53,10 +53,11 @@
         </tbody>
     </table>
     {% if packages %}
+        <p class="text-secondary" style="float: right;">Results: {{ count }} Orders</p>
     {% else %}
-            No Orders In Your Order History
-            <br>
-            <br>
-            <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
+        No Orders In Your Order History
+        <br>
+        <br>
+        <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
     {% endif %}
 {% endblock content %}

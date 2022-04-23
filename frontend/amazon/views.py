@@ -165,6 +165,7 @@ def orders(request):
     items = Item.objects.filter(buyer=request.user)
     packages = Package.objects.filter(owner=request.user).order_by('-create_time')
     context = {
+        'count': packages.count(),
         'categories': Category.objects.all().order_by('-category'),
         'items': items,
         'packages': packages,
