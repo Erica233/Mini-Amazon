@@ -38,6 +38,7 @@
             {% endfor %}
         </tbody>
     </table>
+    <p class="text-end">Total Price:  ${{ package.package_price }}</p>
     {% if items %}
         <div class="col-12">
             <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop More</a>
