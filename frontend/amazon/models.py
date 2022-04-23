@@ -47,7 +47,7 @@ class Item(models.Model):
     in_cart = models.BooleanField(default=True) # False means it was ordered
 
     def __str__(self):
-        return '%s_%s'%(self.product.name, self.buyer.username)
+        return '%s_%s'%(self.product.name, self.id)
 
     @property
     def item_price(self):
