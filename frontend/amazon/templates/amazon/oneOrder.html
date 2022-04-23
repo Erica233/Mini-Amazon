@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <br>
-    <h4>Order Detatil #{{ package.id }}</h4>
+    <h4>Order Detatil #{{ package.id }} - Confirm Time:  {{ package.create_time }}</h4>
     <div class="badge bg-primary text-wrap" style="width: 6rem;">
         Status:  {{ package.status }}
     </div>
@@ -31,7 +31,6 @@
         </tbody>
     </table>
     <p class="text-end">Total Price:  ${{ package.package_price }}</p>
-    <p>Confirm Time:  {{ package.create_time }}</p>
     <fieldset>
         <legend>Logistics Information:</legend>
         <p>Destination_x:  {{ package.destination_x }}</p>
