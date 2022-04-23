@@ -113,7 +113,7 @@ def cart(request):
         if 'remove' in request.POST:
             item_id = request.POST['remove']
             Item.objects.get(id=item_id).delete()
-            return HttpResponseRedirect('amazon-cart')
+            return HttpResponseRedirect(reverse('amazon-cart'))
         package_price = 0
         destination_x = request.POST['destination_x']
         destination_y = request.POST['destination_y']
