@@ -36,9 +36,12 @@
                     </td>
                 </tr>
             {% endfor %}
+            <tr>
+                <td colspan="4"><b>Total Price: </b></td>
+                <td>${{ total_price }}</td>
+            </tr>
         </tbody>
     </table>
-    <p class="text-end">Total Price:  ${{ total_price }}</p>
     {% if items %}
         <div class="col-12">
             <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop More</a>
