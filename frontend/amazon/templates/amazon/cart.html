@@ -47,7 +47,7 @@
                                 </button>
                             </span>
                         {% else %}
-                            <span>
+                            <span style="float:left;">
                                 <form action="{% url 'amazon-cart' %}" method="post">
                                     {% csrf_token %}
                                     <button type="submit" value="-" class="button">
@@ -57,10 +57,10 @@
                                 </form>
                             </span>
                         {% endif %}
-                        <span>
+                        <span style="float:left;">
                             {{ item.product_num }}
                         </span>
-                        <span>
+                        <span style="float:left;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="+" class="button">
@@ -71,10 +71,10 @@
                         </span>
                     </td>
                     <td>
-                        <span>
+                        <span style="float:left;">
                             {{ item.item_price }}&nbsp;&nbsp;
                         </span>
-                        <span>
+                        <span style="float:center;">
                             <form action="{% url 'amazon-cart' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" value="*" class="button">
