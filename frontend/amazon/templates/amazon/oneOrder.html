@@ -34,7 +34,7 @@
     <p class="text-end">Total Price:  ${{ package.package_price }}</p>
     <fieldset>
         <legend>Logistics Information:</legend>
-        <p>Destination:  x: {{ package.destination_x }}, y: {{ package.destination_y }}</p>
+        <p>Destination:  X: {{ package.destination_x }}, Y: {{ package.destination_y }}</p>
         {% if package.ups_verified == True %}
             {% if package.ups_account == '' %}
                 <p>UPS Account: Not Specified</p>
