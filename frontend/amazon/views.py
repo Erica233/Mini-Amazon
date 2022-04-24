@@ -154,6 +154,17 @@ def checkout(request):
             [request.user.email],
             fail_silently=False,
         )
+        # send package_id to backend through TCP socket
+        try:
+            backend = socket.socket()
+            host = socket.gethostname()
+            port = 5678
+            backend.connect((host, port))
+            msg = str(package.id) + '\n'
+            backend.send(msg.encode('utf-8'))
+        except:
+            print("Fail to connect backend!")
+
         messages.add_message(request, messages.INFO, 'Your Order is Placed Successfully!')
         return HttpResponseRedirect(reverse('amazon-one-order', kwargs={'package_id': package.id}))
     else:
