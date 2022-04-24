@@ -1,0 +1,21 @@
+0. Bootstrap
+    We use Bootstrap to make our website more neat and clear. And we use consistent layout.
+1. User System and Order History
+    Users of our website can register accounts and login to shop.
+    Users can check their order history and view details of their orders.
+2. Search Bar and Products Categories
+    Products Categories: Users can shopping under all products or under different categories of products.
+    Search Bar: Users can search products by typing keywords into the search bar.
+3. Products Description and Image
+    Our products have pictures and text descriptions, so that users can get enough information before they buy it.
+4. Shopping Cart
+    Users can add products into their shopping cart, so that they do not need to buy items one by one. They can simply add all the items they want to the shopping cart, then checkout all of them.
+    Users can adjust the quantity of each item in the shopping cart.
+    Users can remove item from their shopping cart.
+    Users can view the overall information, such as total price that they will need to pay for their current shopping cart.
+    Users can checkout to provide address and UPS information.
+5. Warehouse Allocation
+    After making orders, we will allocate our nearest warehouse to the package destination to dispatch it to reduce the waiting time of users.
+6. Email Notification
+    After the order is made, users will receive an notification email about making the order successfully sent from us.
+    The email will offer the details about this order, including items information and logistic information.
