@@ -30,7 +30,7 @@ public class MessageOperator {
 
   /**
    * This receives a goolge protocol buffer message through socket,
-   * adjusts from the C++ versin example provided in the project pdf
+   * adjusts from the C++ version example provided in the project pdf
    */ 
   public <T extends GeneratedMessageV3.Builder<?>> boolean receiveMessage(T message, InputStream input) throws IOException {
     CodedInputStream codedInput = CodedInputStream.newInstance(input);

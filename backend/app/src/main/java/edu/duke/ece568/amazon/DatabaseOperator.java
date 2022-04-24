@@ -22,12 +22,15 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT warehouse_id FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int whnum = res.getInt("warehouse_id");
+      int whnum = -1;
+      while (res.next()) {
+        whnum = res.getInt("warehouse_id");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -48,7 +51,7 @@ public class DatabaseOperator {
     try{
       List<AInitWarehouse> warehouseList = new ArrayList<> ();
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       
       stmt = connection.createStatement();
@@ -82,19 +85,19 @@ public class DatabaseOperator {
       APurchaseMore.Builder purchase = APurchaseMore.newBuilder();
       List<AProduct> productList = new ArrayList<> ();
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "SELECT amazon_package.warehouse_id, amazon_product.id, amazon_product.description, amazon_item.product_num" +
-                   "FROM amazon_item, amazon_package, amazon_product WHERE amazon_item.product_id=amazon_product.id AND" +
+      String sql = "SELECT amazon_package.warehouse_id, amazon_product.id, amazon_product.name, amazon_item.product_num " +
+                   "FROM amazon_item, amazon_package, amazon_product WHERE amazon_item.product_id=amazon_product.id AND " +
                    "amazon_item.package_id=amazon_package.id AND amazon_package.id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      purchase.setWhnum(res.getInt("amazon_package.warehouse_id"));
       while (res.next()) {
+          purchase.setWhnum(res.getInt("warehouse_id"));
           AProduct.Builder product = AProduct.newBuilder();
-          product.setId(res.getInt("amazon_product.id"));
-          product.setDescription(res.getString("amazon_product.description"));
-          product.setCount(res.getInt("amazon_item.product_num"));
+          product.setId(res.getInt("id"));
+          product.setDescription(res.getString("name"));
+          product.setCount(res.getInt("product_num"));
           productList.add(product.build());
       }
       res.close();
@@ -117,12 +120,15 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT status FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      String status = res.getString("status");
+      String status = null;
+      while (res.next()) {
+        status = res.getString("status");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -142,12 +148,12 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "UPDATE amazon_order SET status=" + status + " WHERE id=" + packageId + ";";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      String sql = "UPDATE amazon_package SET status=\'" + status + "\' WHERE id=" + packageId + ";";
+      stmt.executeUpdate(sql); 
+      connection.commit();
       stmt.close();
       connection.close();
     }
@@ -164,12 +170,15 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT ups_account FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      String upsAccount = res.getString("ups_account");
+      String upsAccount = null;
+      while (res.next()) {
+        upsAccount = res.getString("ups_account");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -189,12 +198,12 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "UPDATE amazon_package SET ups_account=" + account + ", ups_verified=true WHERE id=" + packageId + ";";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      String sql = "UPDATE amazon_package SET ups_account=\'" + account + "\', ups_verified=true WHERE id=" + packageId + ";";
+      stmt.executeUpdate(sql);
+      connection.commit();
       stmt.close();
       connection.close();
     }
@@ -211,12 +220,15 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT destination_x FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int destx = res.getInt("destination_x");
+      int destx = -1;
+      while (res.next()) {
+        destx = res.getInt("destination_x");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -236,12 +248,15 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT destination_y FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int desty = res.getInt("destination_y");
+      int desty = -1;
+      while (res.next()) {
+        desty = res.getInt("destination_y");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -261,12 +276,15 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT truck_id FROM amazon_package WHERE id=" + packageId + ";";
       ResultSet res = stmt.executeQuery(sql);
-      int truckId = res.getInt("truck_id");
+      int truckId = -1;
+      while (res.next()) {
+        truckId = res.getInt("truck_id");
+      }
       res.close();
       stmt.close();
       connection.close();
@@ -286,12 +304,12 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "UPDATE amazon_package SET truck_id=" + truckId + "WHERE id=" + packageId + ";";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      stmt.executeUpdate(sql);
+      connection.commit();
       stmt.close();
       connection.close();
     }
@@ -309,7 +327,7 @@ public class DatabaseOperator {
     try{
       boolean result = true;
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "SELECT status FROM amazon_package WHERE truck_id=" + truckId + " AND status!='delivering' AND status!='delivered';";
@@ -343,12 +361,12 @@ public class DatabaseOperator {
     Statement stmt = null;
     try{
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "passw0rd");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
-      String sql = "UPDATE amazon_order SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
-      ResultSet res = stmt.executeQuery(sql);
-      res.close();
+      String sql = "UPDATE amazon_package SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
+      stmt.executeUpdate(sql);
+      connection.commit();
       stmt.close();
       connection.close();
     }
