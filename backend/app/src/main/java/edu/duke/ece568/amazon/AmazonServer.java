@@ -43,6 +43,7 @@ public class AmazonServer {
       getConnection();
       break;
     }
+    new DatabaseOperator().cleanUpDatabase();
     System.out.println("Service start!");
     startService();
   }

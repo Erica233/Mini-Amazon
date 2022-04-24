@@ -339,7 +339,7 @@ public class WorldOperator {
       }
     };
     ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 20, TimeUnit.SECONDS);
+    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 5, TimeUnit.SECONDS);
     runningService.put(seqnum, service);
     runningFuture.put(seqnum, future);
   }

@@ -353,7 +353,7 @@ public class DatabaseOperator {
     return false;
   }
 
-/**
+  /**
    * This updates package status to 'delivering' of the specific truckId in database
    */
   public void updateDeliveringStatus(int truckId) {
@@ -365,6 +365,29 @@ public class DatabaseOperator {
       connection.setAutoCommit(false);
       stmt = connection.createStatement();
       String sql = "UPDATE amazon_package SET status='delivering' WHERE truck_id=" + truckId + " AND status='loaded';";
+      stmt.executeUpdate(sql);
+      connection.commit();
+      stmt.close();
+      connection.close();
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+  }
+
+  /**
+   * This cleans up remaining items and packages in the database created by the last docker start
+   */
+  public void cleanUpDatabase() {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/amazon", "postgres", "postgres");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "DELETE FROM amazon_item;";
+      sql += "DELETE FROM amazon_package;";
       stmt.executeUpdate(sql);
       connection.commit();
       stmt.close();
