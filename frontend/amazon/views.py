@@ -1,4 +1,5 @@
 import socket
+import sys
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -122,7 +123,7 @@ def checkout(request):
         ups_verified = False
         # allocate the nearest warehouse location
         warehouses = Warehouse.objects.all()
-        min_dist = 10000
+        min_dist =  sys.maxsize
         warehouse = None
         for wh in warehouses.iterator():
             dist = abs(wh.location_x - int(destination_x)) ** 2 + abs(wh.location_y - int(destination_y)) ** 2

@@ -55,3 +55,50 @@ We designed a basic frontend website that could purchase one product and inform 
 is saved into the database. For our Amazon server, we made it available to purchase product from world
 simulator and pack the package afterwards. Meanwhile, we implemented the request for pick-up in UPS operator 
 and also added relation sql functions with packages. 
+
+4.15
+We finished the remaining part of communication with world simulator and UPS server, including package packing, 
+package loading, request for truck delivery and receive notifications when a package is delivered to the destination.
+Meanwhile, we implemented relevant database-related functions, which could query necessary data and update the change
+of package status at the right time.
+
+4.16
+Since we had basically accomplished the entire message transfer process, we tried to use acks to ensure the reliability 
+of our communication with the world similar and UPS server. If we do not keep track of the acks we sent and received 
+and implement no function to deal with them, then the world simulator, as well as the UPS server, would not get feedback 
+that the message was successfully received by our Amazon server. Similary, our Amazon server would not never be informed 
+when the otherside received our message. As a result, both sides would repeatly sending the same message, which would 
+significantly slow down the process speed our the whole communication system.
+
+4.17
+We added multi-thread features into our Amazon server. Basically, we have three threads, dealing with messages from 
+the world simulator, the UPS server and the frontend website respectively. In each thread, when handing messages, 
+we would spread out more threads to process different responses. For acks handler, we chose ScheduledExecutorService
+and ScheduledFuture to keep sending a same message every 5 seconds and would get shut down when we receive the
+corresponding acks from the response.
+
+4.18 - 4.19
+We had finishend our backend server and started to improve our frontend website to be more acutally useful. We first
+implemented the user login system, which could enable our cuntomer to sign up for an account and then login into our 
+website for shopping. As a mini-Amazon, We created four major categories and added three products for each type. 
+Temporarily without shopping cart, customer could only purchase one kind of product at a time with their specified 
+amount, then fill out the destination and optional UPS account at the checkout stage. From main page, the user could 
+view all his order history and check the details of products and package status there. 
+
+4.20-4.21
+We tried to add some extra features to our frontend website. We designed one html to show the specific information of 
+one product. All products would be rendered to the same html, and we used a sting connected behind the url to identify 
+the name of product. We added a search bar for customer to do a quick search and locate their ideal product. If the 
+customer entered an invalid product, the website would display nothing and jump back to the main page. Moreover, we added
+the shopping cart, which made it possible to buy different products at a time. At last, we implemented the email 
+notification, which would inform our customers when thier order has been made successfully. 
+
+4.22-4.23
+We asked those two UPS teams to test our servers together. During testing, we have sloved several synchronized and concurrent
+problems happened in message sending and receiving. Besides, we have adjusted the layout of our website to make it become more 
+user-friendly. We have tried to increased the flakiness of the world simulator to test the performance of our server under
+a more unstable environment, and the result was basically correct.
+
+4.24
+We added the docker file, danger-log and differentiation text in our repository and met with UPS teams for final testing.
+All results are correct as expected.
