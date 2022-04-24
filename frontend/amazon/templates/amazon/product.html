@@ -25,25 +25,16 @@
         <div class="media-body">
             <h3><a class="article-title" href="{% url 'amazon-one-product' product.name %}">{{ product.name }}</a></h3>
             <p class="article-content">$ {{ product.price }}</p>
-            <form action="{% url 'amazon-one-product' product.name %}" method="post">
+            <form class="form-horizontal" action="{% url 'amazon-one-product' product.name %}" method="post">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="product_num" class="form-label">Quantity</label>
-                    <input type="number" min='1' class="form-control" id="product_num" name="product_num" required>
+                <div class="row g-3">
+                    <label for="product_num" class="col-sm-2 col-form-label">Quantity</label>
+                    <div class="col-md-2">
+                        <input type="number" min='1' class="form-control" id="product_num" name="product_num" value="1" required>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="destination_x" class="form-label">Destination_x</label>
-                    <input type="number" class="form-control" id="destination_x" name="destination_x" required>
-                </div>
-                <div class="mb-3">
-                    <label for="destination_y" class="form-label">Destination_y</label>
-                    <input type="number" class="form-control" id="destination_y" name="destination_y" required>
-                </div>
-                <div class="mb-3">
-                    <label for="ups_account" class="form-label">UPS Account (optional)</label>
-                    <input type="text" class="form-control" id="ups_account" name="ups_account">
-                </div>
-                <button type="submit" class="btn btn-primary">Buy Now</button>
+                <br>
+                <button type="submit" class="btn btn-primary">Add to Shopping Cart</button>
             </form>
         </div>
     </article>

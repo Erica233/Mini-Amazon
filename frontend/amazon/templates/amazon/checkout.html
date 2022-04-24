@@ -1,0 +1,35 @@
+{% extends "amazon/base.html" %}
+{% block cats %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-checkout' %}">Checkout - Logistic Information</a>
+        </li>
+    </ul>
+{% endblock %}
+{% block content %}
+    <br>
+    <form action="{% url 'amazon-checkout' %}" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <label for="destination_x" class="form-label">Address</label>
+            <div class="col">
+                <input type="number" min=1 class="form-control" id="destination_x" name="destination_x" placeholder="Destination X" required>
+            </div>
+            <div class="col">
+                <input type="number" min=1 class="form-control" id="destination_y" name="destination_y" placeholder="Destination Y" required>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <label for="ups_account" class="form-label">UPS Account (optional)</label>
+            <div class="col">
+                <input type="text" class="form-control" id="ups_account" name="ups_account">
+            </div>
+        </div>
+        <br>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Place Order Now</button>
+        </div>
+    </form>
+    <br>
+{% endblock content %}

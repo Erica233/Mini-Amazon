@@ -17,6 +17,11 @@
                 {% endif %}
             </li>
         {% endfor %}
+        <form class="d-flex" action="{% url 'amazon-products' %}" method="post">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" placeholder="Search Product" name="name" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
     </ul>
 {% endblock %}
 {% block content %}
@@ -29,5 +34,16 @@
             </div>
         </article>
     {% endfor %}
+    <p class="text-secondary" style="float: right;">Results: {{ count }} products</p>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+        <br>
+    </nav>
 {% endblock content %}
 

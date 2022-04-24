@@ -8,27 +8,49 @@
 {% endblock %}
 {% block content %}
     <br>
-    <h4>Order Detatil #{{ package.id }}</h4>
-    <fieldset>
-        <legend>Current Status:  {{ package.status }}</legend>
-    </fieldset>
-    {% for item in items %}
-        <fieldset>
-            <legend>Product Information:</legend>
-            <p>Product:  {{ item.product.name }}</p>
-            <p>Category:  {{ item.product.category }}</p>
-            <p>Quantity:  {{ item.product_num }}</p>
-            <p>Sale price: {{ item.product.price }}</p>
-        </fieldset>
-    {% endfor %}
-    <fieldset>
-        <legend>Total Price:  {{ package.package_price }}</legend>
-        <p>Confirm Time:  {{ package.create_time }}</p>
-    </fieldset>
+    <span style="font-size: 23px;">Order Detatil #{{ package.id }} &nbsp;</span>
+    {% if package.status == 'delivered' %}
+        <div class="badge bg-success text-wrap" style="width: 9rem;">
+            Status:  {{ package.status }}
+        </div>
+    {% else %}
+        <div class="badge bg-primary text-wrap" style="width: 9rem;">
+            Status:  {{ package.status }}
+        </div>
+    {% endif %}
+    <h5 style="font-size: 15px;">Confirmed At {{ package.create_time }}</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Item Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <th>
+                        <a href="{% url 'amazon-one-product' item.product.name %}" class="text-decoration-none">
+                            {{ item.product.name }}
+                        </a>
+                    </th>
+                    <td>${{ item.product.price }}</td>
+                    <td>{{ item.product_num }}</td>
+                    <td>${{ item.item_price }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3"><b>Total Price: </b></td>
+                <td><b>${{ package.package_price }}</b></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
     <fieldset>
         <legend>Logistics Information:</legend>
-        <p>Destination_x:  {{ package.destination_x }}</p>
-        <p>Destination_y:  {{ package.destination_y }}</p>
+        <p>Destination:  X: {{ package.destination_x }}, Y: {{ package.destination_y }}</p>
         {% if package.ups_verified == True %}
             {% if package.ups_account == '' %}
                 <p>UPS Account: Not Specified</p>

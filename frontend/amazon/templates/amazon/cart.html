@@ -1,0 +1,116 @@
+{% extends "amazon/base.html" %}
+{% block cats %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'amazon-cart' %}">Shopping Cart</a>
+        </li>
+    </ul>
+{% endblock %}
+{% block content %}
+    <style>
+        .button {
+            border: none;
+            color: black;
+            background:none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 12px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }
+    </style>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Items</th>
+                <th scope="col">Price</th>
+                <th scope="col" style="float:left;">Quantity</th>
+                <th scope="col" style="float:center;">Item Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <th>
+                        <a href="{% url 'amazon-one-product' item.product.name %}" class="text-decoration-none">
+                            {{ item.product.name }}
+                        </a>
+                    </th>
+                    <td>${{ item.product.price }}</td>
+                    <td>
+                        {% if item.product_num == 1 %}
+                            <span style="float:left;">
+                                <button type="submit" value="-" class="button">
+                                    <i class="bi bi-dash-circle-dotted"></i>
+                                </button>
+                            </span>
+                        {% else %}
+                            <span style="float:left;">
+                                <form action="{% url 'amazon-cart' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" value="-" class="button">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                    <input type="hidden" name="-" value="{{ item.id }}" style="visibility: hidden;">
+                                </form>
+                            </span>
+                        {% endif %}
+                        <span style="float:left;">
+                            {{ item.product_num }}
+                        </span>
+                        <span style="float:left;">
+                            <form action="{% url 'amazon-cart' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" value="+" class="button">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <input type="hidden" name="+" value="{{ item.id }}" style="visibility: hidden;">
+                            </form>
+                        </span>
+                    </td>
+                    <td>
+                        <span style="float:center;">
+                            ${{ item.item_price }}
+                        </span>
+                        <span style="float:right;">
+
+                        </span>
+                        <span style="float:right;">
+                            <form action="{% url 'amazon-cart' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" value="*" class="button">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                                <input type="hidden" name="remove" value="{{ item.id }}" style="visibility: hidden;">
+                            </form>
+                        </span>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if items %}
+                <tr>
+                    <td colspan="3"><b>Total Price: </b></td>
+                    <td><b>${{ total_price }}</b></td>
+                </tr>
+            {% else %}
+            {% endif %}
+        </tbody>
+    </table>
+    {% if items %}
+        <div class="col-12">
+            <a href="{% url 'amazon-checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+        </div>
+        <br>
+        <div class="col-12">
+            <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop More</a>
+        </div>
+    {% else %}
+        No Items In Your Cart Now
+        <br>
+        <br>
+        <a href="{% url 'amazon-products' %}" class="btn btn-primary">Shop Now</a>
+    {% endif %}
+    <br>
+{% endblock content %}
