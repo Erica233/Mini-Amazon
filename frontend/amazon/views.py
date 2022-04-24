@@ -123,7 +123,7 @@ def checkout(request):
         # allocate the nearest warehouse location
         warehouses = Warehouse.objects.all()
         min_dist = 10000
-        warehouse = Warehouse.objects.get(id=1)
+        warehouse = None
         for wh in warehouses.iterator():
             dist = abs(wh.location_x - int(destination_x)) ** 2 + abs(wh.location_y - int(destination_y)) ** 2
             if min_dist > dist:
