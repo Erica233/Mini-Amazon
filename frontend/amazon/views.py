@@ -21,9 +21,11 @@ def allProducts(request):
         products = Product.objects.filter(name__icontains=search_products)
     else:
         products = Product.objects.all()
-
+    #products_paginator = Paginator(products, 2)
+    #page = products_paginator.get_page(1)
     context = {
         'count': products.count(),
+        #'page': page,
         'categories': Category.objects.all().order_by('-category'),
         'products': products,
         'curr_nav': 'all'
