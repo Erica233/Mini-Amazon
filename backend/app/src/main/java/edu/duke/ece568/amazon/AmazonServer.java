@@ -39,6 +39,7 @@ public class AmazonServer {
    */
   public void runServer() {
     new DatabaseOperator().cleanUpDatabase();
+    new DatabaseOperator().setUpDatabase();
     System.out.println("Ready to get connection!");
     while(true) {
       getConnection();

@@ -10,18 +10,18 @@ services:
       volumes:
         - data-volume:/var/lib/postgresql/data
   web-init:
-      build: ./web-app
-      command: /code/initserver.sh
+      build: ./frontend
+      command: bash ./initserver.sh
       volumes:
-        - ./web-app:/code
+        - ./frontend:/code
       depends_on:
         - db
   web:
-      build: ./web-app
+      build: ./frontend
       user: nobody
-      command: /code/runserver.sh
+      command: bash ./runserver.sh
       volumes:
-        - ./web-app:/code
+        - ./frontend:/code
       expose:
         - "8000"
       depends_on:

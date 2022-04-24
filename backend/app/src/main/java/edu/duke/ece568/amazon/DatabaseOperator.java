@@ -38,6 +38,96 @@ public class DatabaseOperator {
   }
 
   /**
+   * This set up the data of warehouse locations, product categories and product information into database
+   */
+  public void setUpDatabase() {
+    Connection connection = null;
+    Statement stmt = null;
+    try{
+      Class.forName("org.postgresql.Driver");
+      connection = DriverManager.getConnection("jdbc:postgresql://db:5432/amazon", "postgres", "postgres");
+      connection.setAutoCommit(false);
+      stmt = connection.createStatement();
+      String sql = "INSERT INTO amazon_warehouse (location_x, location_y) SELECT 10, 10 " + 
+                   "WHERE NOT EXISTS (SELECT * FROM amazon_warehouse WHERE location_x=10);";
+      sql += "INSERT INTO amazon_warehouse (location_x, location_y) SELECT 20, 20 " + 
+             "WHERE NOT EXISTS (SELECT * FROM amazon_warehouse WHERE location_x=20);";
+      sql += "INSERT INTO amazon_warehouse (location_x, location_y) SELECT 30, 30 " + 
+             "WHERE NOT EXISTS (SELECT * FROM amazon_warehouse WHERE location_x=30);";
+      sql += "INSERT INTO amazon_warehouse (location_x, location_y) SELECT 40, 40 " + 
+             "WHERE NOT EXISTS (SELECT * FROM amazon_warehouse WHERE location_x=40);";
+      sql += "INSERT INTO amazon_warehouse (location_x, location_y) SELECT 50, 50 " + 
+             "WHERE NOT EXISTS (SELECT * FROM amazon_warehouse WHERE location_x=50);";
+
+      sql += "INSERT INTO amazon_category (category) SELECT 'meat' " +
+             "WHERE NOT EXISTS (SELECT * FROM amazon_category WHERE category='meat');";
+      sql += "INSERT INTO amazon_category (category) SELECT 'vegetable' " +
+             "WHERE NOT EXISTS (SELECT * FROM amazon_category WHERE category='vegetable');";
+      sql += "INSERT INTO amazon_category (category) SELECT 'fruit' " +
+             "WHERE NOT EXISTS (SELECT * FROM amazon_category WHERE category='fruit');";
+      sql += "INSERT INTO amazon_category (category) SELECT 'drink' " +
+             "WHERE NOT EXISTS (SELECT * FROM amazon_category WHERE category='drink');";
+
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'beef', 10, 'Perfect Portion Strip Steak', '/static/pics/beef.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='meat') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='beef');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'pork', 6, 'Boneless Pork Chop', '/static/pics/pork.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='meat') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='pork');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'chicken', 8, 'Breaded Chicken Cutlets', '/static/pics/chicken.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='meat') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='chicken');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'tomato', 2, 'Beefsteak Tomatoes', '/static/pics/tomato.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='vegetable') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='tomato');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'cucumber', 3, 'Seeded Cucumbers', '/static/pics/cucumber.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='vegetable') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='cucumber');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'cabbage', 4, 'Organic Green Cabbage', '/static/pics/cabbage.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='vegetable') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='cabbage');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'apple', 3, 'Honeycrisp Apples', '/static/pics/apple.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='fruit') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='apple');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'banana', 2, 'Organic Bananas', '/static/pics/banana.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='fruit') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='banana');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'kiwi', 5, 'Tropical Kiwi', '/static/pics/kiwi.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='fruit') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='kiwi');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'cola', 4, 'Coca-Cola Cola', '/static/pics/cola.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='drink') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='cola');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'juice', 5, 'Tropicana Pure Premium 100% Juice', '/static/pics/juice.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='drink') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='juice');";
+      sql += "INSERT INTO amazon_product (name, price, description, pic, category_id) SELECT " +
+             "'beer', 18, 'Corona Extra Beer', '/static/pics/beer.jpg', " + 
+             "(SELECT id FROM amazon_category WHERE category='drink') WHERE NOT EXISTS " + 
+             "(SELECT * FROM amazon_product WHERE name='beer');";                                
+
+      stmt.executeUpdate(sql);
+      stmt.close();
+      connection.commit();
+      connection.close();
+    }
+    catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+  }
+
+  /**
    * This extracts the associated warehouse ID of the specific packageId from database
    */
   public int getWhnum(long packageId) {
