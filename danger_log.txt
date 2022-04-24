@@ -55,3 +55,27 @@ We designed a basic frontend website that could purchase one product and inform 
 is saved into the database. For our Amazon server, we made it available to purchase product from world
 simulator and pack the package afterwards. Meanwhile, we implemented the request for pick-up in UPS operator 
 and also added relation sql functions with packages. 
+
+4.15
+We finished the remaining part of communication with world simulator and UPS server, including package packing, 
+package loading, request for truck delivery and receive notifications when a package is delivered to the destination.
+Meanwhile, we implemented relevant database-related functions, which could query necessary data and update the change
+of package status at the right time.
+
+4.16
+Since we had basically accomplished the entire message transfer process, we tried to use acks to ensure the reliability 
+of our communication with the world similar and UPS server. If we do not keep track of the acks we sent and received 
+and implement no function to deal with them, then the world simulator, as well as the UPS server, would not get feedback 
+that the message was successfully received by our Amazon server. Similary, our Amazon server would not never be informed 
+when the otherside received our message. As a result, both sides would repeatly sending the same message, which would 
+significantly slow down the process speed our the whole communication system.
+
+4.17
+We added multi-thread features into our Amazon server. Basically, we have three threads, dealing with messages from 
+the world simulator, the UPS server and the frontend website respectively. In each thread, when handing messages, 
+we would spread out more threads to process different responses. For acks handler, we chose ScheduledExecutorService
+and ScheduledFuture to keep sending a same message every 5 seconds and would get shut down when we receive the
+corresponding acks from the response.
+
+4.18
+We had finishend our backend server and started to improve our frontend website to be more acutally useful. 
