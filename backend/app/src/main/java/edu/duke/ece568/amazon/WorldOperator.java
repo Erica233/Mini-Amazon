@@ -73,14 +73,25 @@ public class WorldOperator {
   /**
    * This handles messages sent from the world simulator
    */
-  public synchronized void handleWorldMessage() {
+  public void handleWorldMessage() {
     try {
       AResponses.Builder response = AResponses.newBuilder();
       new MessageOperator().receiveMessage(response, in);
-      parseWorldMessage(response.build());
+      Thread th = new Thread() {
+       @Override()
+        public void run() {
+          try {
+            parseWorldMessage(response.build());
+          }
+          catch (IOException e) {
+            System.out.println("Message from world: " + e);
+          }
+        }
+      };
+      th.start();
     }
     catch (IOException e) {
-      System.out.println("Message from world: " + e);
+      //System.out.println("Message from world: " + e);
     }
   }
 
@@ -112,9 +123,11 @@ public class WorldOperator {
     List<AErr> errorList = message.getErrorList();
     for (AErr error : errorList) {
       System.out.println("Message from world: " + error.getErr());
+      ACommands.Builder command = ACommands.newBuilder();
+      command.addAcks(error.getSeqnum());
+      sendAcksToWorld(command);
     }
     
-    List<APackage> packagestatusList = message.getPackagestatusList();
     if (message.hasFinished()) {
       System.out.println("Disconnect to world!");
     }
@@ -127,6 +140,9 @@ public class WorldOperator {
         String status = packageStatus.getStatus();
         new DatabaseOperator().updatePackageStatus(packageId, status);
       }
+      ACommands.Builder command = ACommands.newBuilder();
+      command.addAcks(packageStatus.getSeqnum());
+      sendAcksToWorld(command);
     }
   }
 
@@ -183,6 +199,9 @@ public class WorldOperator {
         }
       }
     }
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addAcks(arrived.getSeqnum());
+    sendAcksToWorld(command);
   }
 
   /**
@@ -224,6 +243,9 @@ public class WorldOperator {
         loadPackage(packageId, truckId);
       }
     }
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addAcks(ready.getSeqnum());
+    sendAcksToWorld(command);
   }
 
   /**
@@ -264,6 +286,9 @@ public class WorldOperator {
         switcher.requestDelivery(truckId);
       }
     }
+    ACommands.Builder command = ACommands.newBuilder();
+    command.addAcks(loaded.getSeqnum());
+    sendAcksToWorld(command);
   }
 
   /**
@@ -302,19 +327,34 @@ public class WorldOperator {
   /**
    * This sends commands to the world simulator
    */
-  public synchronized void sendMessageToWorld(long seqnum, ACommands.Builder message) {
-    message.setSimspeed(200);
+  public void sendMessageToWorld(long seqnum, ACommands.Builder message) {
     Runnable send = () -> {
+      synchronized(out) {
+        try {
+          new MessageOperator().sendMessage(message.build(), out);
+        }
+        catch (IOException e) {
+          System.out.println("Send message to world: " + e);
+        }
+      }
+    };
+    ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
+    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 20, TimeUnit.SECONDS);
+    runningService.put(seqnum, service);
+    runningFuture.put(seqnum, future);
+  }
+
+  /**
+   * This sends acks to the world simulator
+   */
+  public void sendAcksToWorld(ACommands.Builder message) {
+    synchronized(out) {
       try {
         new MessageOperator().sendMessage(message.build(), out);
       }
       catch (IOException e) {
         System.out.println("Send message to world: " + e);
       }
-    };
-    ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-    ScheduledFuture<?> future = service.scheduleAtFixedRate(send, 1, 30, TimeUnit.SECONDS);
-    runningService.put(seqnum, service);
-    runningFuture.put(seqnum, future);
+    }    
   }
 }

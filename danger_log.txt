@@ -1,0 +1,57 @@
+Danger log
+
+4.6
+We met with our IG members and discussed the prototype of our Amazon-UPS protocol together.We designed 
+several message types that would be applied in the communication between Amazon and UPS. Besides, we also 
+used lucid chart to drew the functionality diagram to help us understand the communication logic among 
+Amazon, UPS and the world simulator.
+
+4.7
+We discussed the fundamental design of our project and finally decided to use Django for the website 
+design and Java for the backend server. We also imported the draft protocol and converted it to Java
+file, which contains interface of various message types that could be utilized for communication.
+
+4.8
+We mainly focused on the backend design. We applied Java socket package to try to get connection with
+the world simulator. The operation on inputtream and outputstream is tricky, and we referred to the google 
+protocol buffer documentation and found appropriate functions to send and receive messages through sockets
+via coded stream, like writeUInt32NoTag() for sending and readRawVarint32() for receiving. Finally we 
+successfully came up two two general functions, one for message sending and one for receiving, and sent a 
+message to the world simulator and received the "connected" response.
+
+4.9
+We met with our IG members again to modify our Amazon-UPS protocol under the guidance from the TA. We 
+mainly focused on the package details to include during communication and clarified the usage of acks.
+However, we kept the problem of truck regulation to the next meeting. Besides, we built the structure of 
+Django for our frontend and successfully got connection with the website.
+
+4.10
+We discussed together about the models we need to build in this project. As a prototype, we basically came 
+up with tables for users, products, items and packages and created them in our database. At the backend side, 
+we learnd JDBC from the official postgres tutorial and successfully got connection with the database and 
+could query and modify data in it.
+
+4.11
+Based on the Amazon-UPS protocol, we tried to write the socket connection between Amazon and UPS, which is 
+quite similar with that for world simulator. Based on our design, we made some modifications to cover correct 
+informaiton in messages that would be sent from the UPS side and hand over to the world simulator after parse. 
+Since we did not have the help from a UPS team, we just kept our code without testing and moved on.
+
+4.12
+We re-designed the fundamental structure of our backend server. Basically, we divided our Amazon server into 
+three separate operators, handling messages from world simulator, UPS server and frontend website respectively.
+Besides, we gathered all the query and update functions related with database into an individual class, so that
+each operator could easily use it to get in touch with PostgreSQL.
+
+4.13
+We met with those two UPS teams and tested our connection between Amazon server and UPS server, and the result
+was correct. Besides, we also disscussed together about the message for package pick-up and truck assignment.
+As a result, we decided to let UPS side assign packages to a specific truck and let Amazon side decide when
+to send a truck for delivery. After discussion, we upgraded our protocol and slightly modified some functions
+in our Amazon server.
+
+4.14
+We designed a basic frontend website that could purchase one product and inform the backend when the order
+is saved into the database. For our Amazon server, we made it available to purchase product from world
+simulator and pack the package afterwards. Meanwhile, we implemented the request for pick-up in UPS operator 
+and also added relation sql functions with packages. 

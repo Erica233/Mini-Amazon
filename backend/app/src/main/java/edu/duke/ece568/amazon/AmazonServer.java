@@ -23,7 +23,12 @@ public class AmazonServer {
     seqnumFactory = new SeqnumFactory();
     worldOperator = new WorldOperator(seqnumFactory);
     upsOperator = new UpsOperator(seqnumFactory);
-    frontendOperator = new FrontendOperator();
+    try {
+      frontendOperator = new FrontendOperator();
+    } 
+    catch (Exception e) {
+       System.out.println("Create Frontend Operator: " + e);
+    }
     worldUpsSwitcher = new WorldUpsSwitcher(worldOperator, upsOperator);
     worldOperator.setSwitcher(worldUpsSwitcher);
     upsOperator.setSwitcher(worldUpsSwitcher);
@@ -40,7 +45,6 @@ public class AmazonServer {
     }
     System.out.println("Service start!");
     startService();
-    System.out.println("Finish Successfully!");
   }
 
   /**
@@ -57,12 +61,12 @@ public class AmazonServer {
           break;
         }
         catch (IOException e) {
-          System.out.println("World connection: " + e);
+          //System.out.println("World connection: " + e);
           continue;
         }
       }
       catch (IOException e) {
-        System.out.println("UPS connection: " + e);
+        //System.out.println("UPS connection: " + e);
         continue;
       }    
     }
@@ -100,16 +104,7 @@ public class AmazonServer {
    */
   public void dealFrontendMessage() {
     while (true) {
-      try {
-        long seqnum = frontendOperator.handleFrontendMessage();
-        if (seqnum != -1) {
-          worldOperator.purchaseProduct(seqnum);
-        }
-      }
-      catch (IOException e) {
-        System.out.println("Message from frontend: " + e);
-        continue;
-      }
+      frontendOperator.handleFrontendMessage(worldOperator);
     }
   }
 
