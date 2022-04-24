@@ -38,12 +38,12 @@ public class AmazonServer {
    * This starts an amazon server
    */
   public void runServer() {
+    new DatabaseOperator().cleanUpDatabase();
     System.out.println("Ready to get connection!");
     while(true) {
       getConnection();
       break;
     }
-    new DatabaseOperator().cleanUpDatabase();
     System.out.println("Service start!");
     startService();
   }
