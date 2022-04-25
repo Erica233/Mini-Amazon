@@ -159,7 +159,7 @@ def checkout(request):
         # send package_id to backend through TCP socket
         try:
             backend = socket.socket()
-            host = socket.gethostname()
+            host = "172.22.0.1"
             port = 5678
             backend.connect((host, port))
             msg = str(package.id) + '\n'
