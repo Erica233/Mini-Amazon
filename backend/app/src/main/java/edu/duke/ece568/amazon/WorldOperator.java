@@ -181,7 +181,6 @@ public class WorldOperator {
           APurchaseMore purchase = purchasingProduct.get(id);
           if (purchase.getWhnum() == arrived.getWhnum() && purchase.getThingsList().equals(arrived.getThingsList())) {
             packageId = id;
-            purchasingProduct.remove(id);
             break;
           }
           else {
@@ -192,6 +191,7 @@ public class WorldOperator {
           System.out.println("Purchased package: package not Found!");
         }
         else {
+          purchasingProduct.remove(packageId);
           new DatabaseOperator().updatePackageStatus(packageId, "purchased");
           System.out.println("Package " + packageId + " is purchased");
           switcher.requestPickPackage(packageId, arrived);
