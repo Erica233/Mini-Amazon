@@ -15,4 +15,3 @@ For the connection between the frontend website and the backend server, you need
 in Django, which on my laptop is "172.22.0.1".
 
 Wish you have a pleasant shopping experience!
-
